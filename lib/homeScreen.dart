@@ -28,26 +28,46 @@ class HomeScreen extends StatelessWidget {
               fontSize: 30,
             ),
           ),
-          // actions: [
-          //   Container(
-          //       decoration: BoxDecoration(
-          //         borderRadius: BorderRadius.circular(10),
-          //         color: Colors.amber,
-          //       ),
-          //       margin: EdgeInsets.all(10),
-          //       padding: EdgeInsets.all(5),
-          //       child: Icon(
-          //         Icons.search,
-          //         color: Colors.black,
-          //       )),
-          //   OutlinedButton(
-          //       style: IconButton.styleFrom(backgroundColor: Colors.red),
-          //       onPressed: () {},
-          //       child: Icon(
-          //         Icons.search,
-          //         color: Colors.black,
-          //       )),
-          // ],
+          actions: [
+            //
+            ButtonBar(
+              buttonPadding: EdgeInsets.all(7),
+              children: [
+                //
+                InkWell(
+                  splashFactory: InkSplash.splashFactory,
+                  borderRadius: BorderRadius.circular(10),
+                  onTap: () {},
+                  child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.black12,
+                      ),
+                      padding: EdgeInsets.all(7),
+                      child: Icon(
+                        Icons.search,
+                        color: Colors.black,
+                      )),
+                ),
+                //
+                InkWell(
+                  splashFactory: InkSplash.splashFactory,
+                  borderRadius: BorderRadius.circular(10),
+                  onTap: () {},
+                  child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.black12,
+                      ),
+                      padding: EdgeInsets.all(7),
+                      child: Icon(
+                        Icons.error_outline_outlined,
+                        color: Colors.black,
+                      )),
+                ),
+              ],
+            )
+          ],
         ),
         body: Center(
           child: Column(
