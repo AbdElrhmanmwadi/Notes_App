@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, dead_code
 
 import 'package:flutter/material.dart';
 
@@ -7,6 +7,7 @@ class homeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isAddNote = false;
     return Container(
       decoration: BoxDecoration(
         gradient: const LinearGradient(
@@ -17,6 +18,15 @@ class homeScreen extends StatelessWidget {
         ),
       ),
       child: Scaffold(
+        floatingActionButton: FloatingActionButton(
+          elevation: .5,
+          backgroundColor: Colors.black12,
+          foregroundColor: Colors.black,
+          onPressed: () {
+            Navigator.of(context).pushNamed('AddNote');
+          },
+          child: Icon(Icons.add),
+        ),
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           elevation: 0,
@@ -69,31 +79,57 @@ class homeScreen extends StatelessWidget {
             )
           ],
         ),
-        body: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                child: Image.asset(
-                  'images/rafiki.png',
-                  fit: BoxFit.fill,
-                  filterQuality: FilterQuality.high,
+        body: isAddNote
+            ? ListView.builder(
+                shrinkWrap: true,
+                itemCount: 10,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                        height: 100,
+                        width: 100,
+                        decoration: BoxDecoration(
+                            color: Colors.black12,
+                            borderRadius: BorderRadius.circular(10)),
+                        child: ListTile(
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 10),
+                          title: Text(
+                            'fontSize: 20,',
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.normal),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        )),
+                  );
+                },
+              )
+            : Center(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      child: Image.asset(
+                        'images/rafiki.png',
+                        fit: BoxFit.fill,
+                        filterQuality: FilterQuality.high,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Text(
+                      'Create your first note !',
+                      style: TextStyle(
+                          color: Colors.black12,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w300),
+                    ),
+                  ],
                 ),
               ),
-              SizedBox(
-                height: 15,
-              ),
-              Text(
-                'Create your first note !',
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w300),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
