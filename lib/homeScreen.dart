@@ -29,6 +29,7 @@ class homeScreen extends StatelessWidget {
         ),
         backgroundColor: Colors.transparent,
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           elevation: 0,
           backgroundColor: Colors.transparent,
           title: Text(
@@ -123,7 +124,7 @@ class homeScreen extends StatelessWidget {
                     Text(
                       'Create your first note !',
                       style: TextStyle(
-                          color: Colors.black12,
+                          color: Colors.white,
                           fontSize: 20,
                           fontWeight: FontWeight.w300),
                     ),
