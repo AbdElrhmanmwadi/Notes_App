@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:note/addnote.dart';
 import 'package:note/homeScreen.dart';
+import 'package:note/viewNote.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -17,7 +18,8 @@ class MyApp extends StatelessWidget {
       home: const homeScreen(),
       routes: {
         'HomeScreen': (context) => homeScreen(),
-        'AddNote': (context) => Addnote()
+        'AddNote': (context) => Addnote(),
+        'ViewNote':(context) => ViewNote(),
       },
     );
   }
