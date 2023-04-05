@@ -7,7 +7,7 @@ class homeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isAddNote = false;
+    bool isAddNote = true;
     return Container(
       decoration: BoxDecoration(
         gradient: const LinearGradient(
@@ -94,6 +94,8 @@ class homeScreen extends StatelessWidget {
                             color: Colors.black12,
                             borderRadius: BorderRadius.circular(10)),
                         child: ListTile(
+                          onTap: () =>
+                              Navigator.of(context).pushNamed('ViewNote'),
                           contentPadding: EdgeInsets.symmetric(
                               horizontal: 20, vertical: 10),
                           title: Text(
