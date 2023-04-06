@@ -1,13 +1,25 @@
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
+
 import 'package:flutter/material.dart';
 
-class ViewNote extends StatelessWidget {
-  const ViewNote({Key? key}) : super(key: key);
+class ViewNote extends StatefulWidget {
+  final title;
+  final body;
+  const ViewNote({Key? key, required this.title, required this.body})
+      : super(key: key);
 
+  @override
+  State<ViewNote> createState() => _ViewNoteState();
+}
+
+class _ViewNoteState extends State<ViewNote> {
+  TextEditingController titleController = TextEditingController();
+  TextEditingController bodyController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [Colors.white, Colors.white70, Colors.white],
@@ -58,8 +70,71 @@ class ViewNote extends StatelessWidget {
                 ),
                 //
               ],
-            )
+            ),
           ],
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: TextFormField(
+                    controller: titleController,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontStyle: FontStyle.italic,
+                      fontSize: 25,
+                    ),
+                    maxLines: null,
+                    maxLength: 1000,
+                    buildCounter: (context,
+                            {required currentLength,
+                            required isFocused,
+                            required maxLength}) =>
+                        Text('$currentLength'),
+                    decoration: InputDecoration(
+                      hintText: 'Title',
+                      hintStyle: TextStyle(
+                        color: Colors.black,
+                        fontStyle: FontStyle.italic,
+                        fontSize: 25,
+                      ),
+                      border: InputBorder.none,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: TextFormField(
+                    controller: bodyController,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontStyle: FontStyle.italic,
+                      fontSize: 20,
+                    ),
+                    maxLines: null,
+                    maxLength: 1000,
+                    buildCounter: (context,
+                            {required currentLength,
+                            required isFocused,
+                            required maxLength}) =>
+                        Text('$currentLength'),
+                    decoration: InputDecoration(
+                      hintText: 'Type something....',
+                      hintStyle: TextStyle(
+                        color: Colors.black,
+                        fontStyle: FontStyle.italic,
+                        fontSize: 20,
+                      ),
+                      border: InputBorder.none,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
