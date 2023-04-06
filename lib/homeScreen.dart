@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, dead_code
 
 import 'package:flutter/material.dart';
+import 'package:note/viewNote.dart';
 
 class homeScreen extends StatelessWidget {
   const homeScreen({Key? key}) : super(key: key);
@@ -95,7 +96,10 @@ class homeScreen extends StatelessWidget {
                             borderRadius: BorderRadius.circular(10)),
                         child: ListTile(
                           onTap: () =>
-                              Navigator.of(context).pushNamed('ViewNote'),
+                              Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) =>
+                                ViewNote(title: 'title', body: 'body'),
+                          )),
                           contentPadding: EdgeInsets.symmetric(
                               horizontal: 20, vertical: 10),
                           title: Text(

@@ -17,9 +17,9 @@ class MyApp extends StatelessWidget {
       ),
       home: const homeScreen(),
       routes: {
-        'HomeScreen': (context) => homeScreen(),
-        'AddNote': (context) => Addnote(),
-        'ViewNote':(context) => ViewNote(),
+        'HomeScreen': (context) => const homeScreen(),
+        'AddNote': (context) => const Addnote(),
+        
       },
     );
   }
