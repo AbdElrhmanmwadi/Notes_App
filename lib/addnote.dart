@@ -1,81 +1,49 @@
-// ignore_for_file: prefer_const_constructors, unused_local_variable, non_constant_identifier_names
+// ignore_for_file: prefer_const_constructors, unused_local_variable, non_constant_identifier_names, unnecessary_string_interpolations, avoid_print
 
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:note/controller/addNoteController.dart';
+import 'package:note/controller/sqlConrtoller.dart';
 import 'package:note/dimensions.dart';
+import 'package:note/homeScreen.dart';
+import 'package:note/sql/SqlDb.dart';
 import 'package:note/styles.dart';
+import 'package:note/willPopDialog.dart';
 
 var sumLength = 0;
 
 class Addnote extends StatefulWidget {
-  const Addnote({Key? key}) : super(key: key);
+  const Addnote({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<Addnote> createState() => _AddnoteState();
 }
 
 class _AddnoteState extends State<Addnote> {
+  final SqlDb sqlDb = SqlDb();
+  bool _canPop = false;
+  TextEditingController titleController = TextEditingController();
+  TextEditingController bodyController = TextEditingController();
+  // SqlController controller =Get.put(SqlController());
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    var LengthOne = 0;
-    var LengthTwo = 0;
-    setState(() {
-      sumLength;
-    });
-    bool _canPop = false;
-    TextEditingController titleController = TextEditingController();
-    TextEditingController bodyController = TextEditingController();
+    ViewNoteController controller = Get.put(ViewNoteController());
     return WillPopScope(
       onWillPop: () async {
-        if (_canPop) {
+        if (controller.canPop.value) {
           return true;
         } else {
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              actionsAlignment: MainAxisAlignment.spaceEvenly,
-              backgroundColor: Colors.white38,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)),
-              title: Center(
-                  child: Icon(
-                Icons.error,
-                color: Colors.white,
-              )),
-              content: Text(
-                "Are your sure you want discard your changes ?",
-                style: TextStyle(
-                    color: Colors.white, fontWeight: FontWeight.normal),
-              ),
-              actions: [
-                MaterialButton(
-                  color: Colors.white54,
-                  textColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5)),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text("Keep"),
-                ),
-                MaterialButton(
-                  textColor: Colors.white,
-                  color: Colors.white38,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5)),
-                  onPressed: () {
-                    setState(() {
-                      _canPop = true;
-                    });
-                    Navigator.of(context).pushNamed('HomeScreen');
-                  },
-                  child: Text("Discard"),
-                ),
-              ],
-            ),
-          );
+          showDialog(context: context, builder: (context) => WillPopDialog());
           return false;
         }
       },
@@ -83,38 +51,44 @@ class _AddnoteState extends State<Addnote> {
         appBar: AppBar(
           elevation: 0,
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          leading: Icon(
-            Icons.arrow_back,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
             color: Colors.black,
+            onPressed: () async {
+              var response = await sqlDb.insert('notes', {
+                'note': "${bodyController.text}",
+                'title': "${titleController.text}",
+                'date': "${DateFormat.MMMEd().format(DateTime.now())}",
+              });
+              print(response);
+              if (response > 0) {
+                print('insaret');
+                Get.to(HomeScreen(
+                  initIndex: 0,
+                ));
+              }
+            },
           ),
           actions: [
-            IconButton(
-              onPressed: () {},
-              icon: Icon(
-                Icons.arrow_back,
-                color: Colors.black,
-              ),
-            ),
-            IconButton(
-              onPressed: () {},
-              icon: Icon(
-                Icons.arrow_forward,
-                color: Colors.black,
-              ),
-            ),
             IconButton(
                 onPressed: () {},
                 icon: Icon(
                   Icons.color_lens_rounded,
                   color: Colors.black,
                 )),
-            IconButton(
-                onPressed: () {},
-                icon: Icon(
-                  Icons.check,
-                  size: 30,
-                  color: Colors.black,
-                )),
+            Obx(
+              () => controller.isShow()
+                  ? IconButton(
+                      onPressed: () async {
+                        controller.isShow.value = false;
+                      },
+                      icon: Icon(
+                        Icons.check,
+                        size: 30,
+                        color: Colors.black,
+                      ))
+                  : Container(),
+            )
           ],
         ),
         body: Padding(
@@ -124,41 +98,13 @@ class _AddnoteState extends State<Addnote> {
               children: [
                 TextFormField(
                   controller: titleController,
+                  onTap: () => controller.isShow.value = true,
+                  onTapOutside: (event) => controller.isShow.value = false,
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 25,
                   ),
                   maxLines: null,
-                  maxLength: 1000,
-                  buildCounter: (context,
-                      {required currentLength,
-                      required isFocused,
-                      required maxLength}) {
-                    LengthOne = currentLength;
-                    sumLength = LengthOne + LengthTwo;
-                    return Row(
-                      children: [
-                        Text(
-                          '${DateFormat('M-dd-h:mm').format(DateTime.now())}',
-                          style: robotoRegular.copyWith(
-                              fontSize: Dimensions.fontSizeSmall,
-                              color: Colors.black38),
-                        ),
-                        Text(
-                          '  |  ',
-                          style: robotoRegular.copyWith(
-                              fontSize: Dimensions.fontSizeSmall,
-                              color: Colors.black26),
-                        ),
-                        Text(
-                          '$sumLength Characters',
-                          style: robotoRegular.copyWith(
-                              fontSize: Dimensions.fontSizeSmall,
-                              color: Colors.black38),
-                        ),
-                      ],
-                    );
-                  },
                   decoration: InputDecoration(
                     hintText: 'Title',
                     hintStyle: robotoRegular.copyWith(
@@ -167,6 +113,12 @@ class _AddnoteState extends State<Addnote> {
                   ),
                 ),
                 TextFormField(
+                  keyboardAppearance: Brightness.light,
+                  onTap: () => controller.isShow.value = true,
+                  onTapOutside: (event) {
+                    controller.isShow.value = false;
+                    FocusManager.instance.primaryFocus?.unfocus();
+                  },
                   controller: bodyController,
                   style: TextStyle(
                     color: Colors.black,
@@ -178,9 +130,28 @@ class _AddnoteState extends State<Addnote> {
                       {required currentLength,
                       required isFocused,
                       required maxLength}) {
-                    LengthTwo = currentLength;
-
-                    return Container();
+                    return Row(
+                      children: [
+                        Text(
+                          '${DateFormat('MMM d  h:mm a').format(DateTime.now())}',
+                          style: robotoRegular.copyWith(
+                              fontSize: Dimensions.fontSizeSmall,
+                              color: Colors.black38),
+                        ),
+                        Text(
+                          '  |  ',
+                          style: robotoRegular.copyWith(
+                              fontSize: Dimensions.fontSizeSmall,
+                              color: Colors.black26),
+                        ),
+                        Text(
+                          '$currentLength Characters',
+                          style: robotoRegular.copyWith(
+                              fontSize: Dimensions.fontSizeSmall,
+                              color: Colors.black38),
+                        ),
+                      ],
+                    );
                   },
                   decoration: InputDecoration(
                     hintText: 'Start typing',

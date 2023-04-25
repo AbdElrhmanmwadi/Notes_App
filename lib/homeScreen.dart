@@ -1,32 +1,58 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unnecessary_new
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, file_names, avoid_print, must_be_immutable, prefer_typing_uninitialized_variables, non_constant_identifier_names
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:get/get.dart';
 import 'package:note/addnote.dart';
-import 'package:note/dimensions.dart';
-import 'package:note/styles.dart';
+import 'package:note/bottomShettTask.dart';
+import 'package:note/controller/sqlConrtoller.dart';
+import 'package:note/pageone.dart';
+import 'package:note/pagetwo.dart';
+import 'package:note/sql/SqlDb.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+class HomeScreen extends StatelessWidget {
+  HomeScreen({Key? key, required this.initIndex}) : super(key: key);
+  final initIndex;
+  SqlDb sqlDb = SqlDb();
 
-  @override
-  _HomeScreenState createState() => _HomeScreenState();
-}
+  SqlController controller = Get.put(SqlController());
+  TextEditingController taskController = TextEditingController();
 
-class _HomeScreenState extends State<HomeScreen> {
+  var pageIndex = 0;
+  bool? CompletTask = false;
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
+      initialIndex: initIndex,
       length: 2,
       child: Scaffold(
         floatingActionButton: FloatingActionButton(
           elevation: 0,
           backgroundColor: Colors.amberAccent,
           onPressed: () {
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => Addnote(),
-            ));
+            if (pageIndex.isEven) {
+              Get.to(() => Addnote());
+            } else {
+              Get.bottomSheet(
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: bottomShettTask(
+                      hint: 'Enter tap to save task',
+                      taskController: taskController,
+                      sqlDb: sqlDb,
+                      onPressed: () async {
+                        var respones = await sqlDb
+                            .insert('tasks', {'task': taskController.text});
+                        if (respones > 0) {
+                          print(respones);
+                        }
+                        Get.back();
+                      }),
+                ),
+              );
+            }
+
+            // sqlDb.deleteMyDatabase();
           },
           child: Icon(
             Icons.add,
@@ -41,12 +67,17 @@ class _HomeScreenState extends State<HomeScreen> {
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           elevation: 0,
           centerTitle: true,
+          automaticallyImplyLeading: false,
           title: TabBar(
             isScrollable: true,
             indicatorSize: TabBarIndicatorSize.label,
             unselectedLabelColor: Colors.grey,
             labelColor: Colors.yellow,
             indicatorColor: Colors.transparent,
+            onTap: (value) {
+              pageIndex = value;
+              print(pageIndex);
+            },
             tabs: [
               Icon(
                 Icons.note_alt_outlined,
@@ -73,98 +104,56 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         body: TabBarView(
-          physics: BouncingScrollPhysics(),
+          physics: NeverScrollableScrollPhysics(),
           dragStartBehavior: DragStartBehavior.down,
           children: [
-            Container(
-                padding: EdgeInsets.symmetric(horizontal: 15),
-                width: double.infinity,
-                height: MediaQuery.of(context).size.height,
-                child: Column(
-                  children: [
-                    TextFormField(
-                        decoration: InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(vertical: 0),
-                      hintText: 'Search notes',
-                      hintStyle: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w300,
-                          color: Colors.black.withOpacity(.5)),
-                      focusColor: Colors.red,
-                      prefixIcon: Icon(
-                        Icons.search,
-                        size: 20,
-                      ),
-                      fillColor: Colors.grey.withOpacity(.1),
-                      filled: true,
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: BorderSide.none),
-                    )),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Expanded(
-                        child: StaggeredGridView.countBuilder(
-                            staggeredTileBuilder: (index) =>
-                                StaggeredTile.fit(1),
-                            padding: EdgeInsets.zero,
-                            crossAxisCount: 2,
-                            shrinkWrap: true,
-                            itemCount: 5,
-                            itemBuilder: (BuildContext context, int index) =>
-                                new ClipRRect(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(15.0)),
-                                  child: Card(
-                                    borderOnForeground: false,
-                                    color: Colors.white,
-                                    elevation: .9,
-                                    shape: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(15),
-                                        borderSide: BorderSide.none),
-                                    child: Container(
-                                      padding: EdgeInsets.all(15),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(15),
-                                        color: Colors.white.withOpacity(1),
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text('Title',
-                                              style: robotoRegular.copyWith(
-                                                  fontSize: Dimensions
-                                                      .fontSizeLarge)),
-                                          SizedBox(
-                                            height: 15,
-                                          ),
-                                          Text(
-                                            'body',
-                                            style: robotoRegular.copyWith(
-                                                fontWeight: FontWeight.w200),
-                                            maxLines: 5,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                          SizedBox(
-                                            height: 15,
-                                          ),
-                                          Text(
-                                            '${DateTime.now()}',
-                                            maxLines: 1,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ))),
-                  ],
-                )),
-            Text('1'),
+            pageOne(controller: controller, sqlDb: sqlDb),
+            pageTwo(
+                controller: controller,
+                sqlDb: sqlDb,
+                taskController: taskController),
           ],
         ),
       ),
     );
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+                                        //  FormField<bool>(
+//   builder: (FormFieldState<bool> state) {
+//     return InputDecorator(
+//       decoration: InputDecoration(
+//         labelText: 'Label',
+//         errorText: state.hasError ? state.errorText : null,
+//       ),
+//       child: CheckboxListTile(
+//         title: Text('Checkbox title'),
+//         value: state.value ?? false,
+//         onChanged: (bool newValue) {
+//           state.didChange(newValue);
+//         },
+//         controlAffinity: ListTileControlAffinity.leading,
+//       ),
+//     );
+//   },
+//   validator: (value) {
+//     if (value == null) {
+//       return 'Please select a value';
+//     }
+//     return null;
+//   },
+//   onSaved: (value) {
+//     // Handle saving the form value
+//   },
+// )

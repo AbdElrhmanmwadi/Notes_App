@@ -1,139 +1,158 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, prefer_typing_uninitialized_variables
+// ignore_for_file: prefer_const_constructors, unused_local_variable, non_constant_identifier_names, unnecessary_string_interpolations, avoid_print, unused_import, prefer_typing_uninitialized_variables, unnecessary_brace_in_string_interps
+
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:note/controller/addNoteController.dart';
+import 'package:note/controller/sqlConrtoller.dart';
+import 'package:note/dimensions.dart';
+import 'package:note/homeScreen.dart';
+import 'package:note/sql/SqlDb.dart';
+import 'package:note/styles.dart';
 
-class ViewNote extends StatefulWidget {
-  final title;
-  final body;
-  const ViewNote({Key? key, required this.title, required this.body})
-      : super(key: key);
+class ViewNote extends StatelessWidget {
+  final String title, body;
+  final id;
+  ViewNote({
+    Key? key,
+    required this.title,
+    required this.body,
+    required this.id,
+  }) : super(key: key);
 
-  @override
-  State<ViewNote> createState() => _ViewNoteState();
-}
+  final SqlDb sqlDb = SqlDb();
 
-class _ViewNoteState extends State<ViewNote> {
+  SqlController sqlController = SqlController();
+
   TextEditingController titleController = TextEditingController();
+
   TextEditingController bodyController = TextEditingController();
+
+  // SqlController controller =Get.put(SqlController());
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Colors.white, Colors.white70, Colors.white],
-          stops: [0.1, 0.8, 0.99],
+    ViewNoteController controller = Get.put(ViewNoteController());
+    SqlController sqlcontroller = Get.put(sqlController);
+    titleController.text = title;
+    bodyController.text = body;
+
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        leading: BackButton(
+          color: Colors.black,
+          onPressed: () async {
+            var response = await sqlDb.update(
+                'notes',
+                {
+                  'note': "${bodyController.text}",
+                  'title': "${titleController.text}",
+                  'date': "${DateFormat.MMMEd().format(DateTime.now())}",
+                },
+                'id=$id');
+            print(response);
+            if (response > 0) {
+              Get.to(HomeScreen(
+                initIndex: 0,
+              ));
+            }
+          },
         ),
+        actions: [
+          IconButton(
+              onPressed: () {},
+              icon: Icon(
+                Icons.color_lens_rounded,
+                color: Colors.black,
+              )),
+          Obx(
+            () => controller.isShow()
+                ? IconButton(
+                    onPressed: () async {
+                      controller.isShow.value = false;
+                    },
+                    icon: Icon(
+                      Icons.check,
+                      size: 30,
+                      color: Colors.black,
+                    ))
+                : Container(),
+          )
+        ],
       ),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          title: InkWell(
-            splashFactory: InkSplash.splashFactory,
-            borderRadius: BorderRadius.circular(10),
-            onTap: () {
-              Navigator.of(context).pop();
-            },
-            child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.black12,
-                ),
-                padding: EdgeInsets.all(7),
-                child: Icon(
-                  Icons.arrow_back_ios_new,
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              TextFormField(
+                controller: titleController,
+                onTap: () => controller.isShow.value = true,
+                onTapOutside: (event) => controller.isShow.value = false,
+                style: TextStyle(
                   color: Colors.black,
-                )),
-          ),
-          actions: [
-            ButtonBar(
-              children: [
-                //
-                InkWell(
-                  splashFactory: InkSplash.splashFactory,
-                  borderRadius: BorderRadius.circular(10),
-                  onTap: () {},
-                  child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.black12,
-                      ),
-                      padding: EdgeInsets.all(7),
-                      child: Icon(
-                        Icons.save_rounded,
-                        color: Colors.black,
-                      )),
+                  fontSize: 25,
                 ),
-                //
-              ],
-            ),
-          ],
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: TextFormField(
-                    controller: titleController,
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontStyle: FontStyle.italic,
-                      fontSize: 25,
-                    ),
-                    maxLines: null,
-                    maxLength: 1000,
-                    buildCounter: (context,
-                            {required currentLength,
-                            required isFocused,
-                            required maxLength}) =>
-                        Text('$currentLength'),
-                    decoration: InputDecoration(
-                      hintText: 'Title',
-                      hintStyle: TextStyle(
-                        color: Colors.black,
-                        fontStyle: FontStyle.italic,
-                        fontSize: 25,
-                      ),
-                      border: InputBorder.none,
-                    ),
-                  ),
+                maxLines: null,
+                decoration: InputDecoration(
+                  hintText: 'Title',
+                  hintStyle: robotoRegular.copyWith(
+                      fontSize: 22, color: Colors.black45),
+                  border: InputBorder.none,
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: TextFormField(
-                    controller: bodyController,
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontStyle: FontStyle.italic,
-                      fontSize: 20,
-                    ),
-                    maxLines: null,
-                    maxLength: 1000,
-                    buildCounter: (context,
-                            {required currentLength,
-                            required isFocused,
-                            required maxLength}) =>
-                        Text('$currentLength'),
-                    decoration: InputDecoration(
-                      hintText: 'Type something....',
-                      hintStyle: TextStyle(
-                        color: Colors.black,
-                        fontStyle: FontStyle.italic,
-                        fontSize: 20,
-                      ),
-                      border: InputBorder.none,
-                    ),
-                  ),
+              ),
+              TextFormField(
+                keyboardAppearance: Brightness.light,
+                onTap: () => controller.isShow.value = true,
+                onTapOutside: (event) {
+                  controller.isShow.value = false;
+                  FocusManager.instance.primaryFocus?.unfocus();
+                },
+                controller: bodyController,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 20,
                 ),
-              ],
-            ),
+                maxLines: null,
+                maxLength: 1000,
+                buildCounter: (context,
+                    {required currentLength,
+                    required isFocused,
+                    required maxLength}) {
+                  return Row(
+                    children: [
+                      Text(
+                        '${DateFormat('MMM d  h:mm a').format(DateTime.now())}',
+                        style: robotoRegular.copyWith(
+                            fontSize: Dimensions.fontSizeSmall,
+                            color: Colors.black38),
+                      ),
+                      Text(
+                        '  |  ',
+                        style: robotoRegular.copyWith(
+                            fontSize: Dimensions.fontSizeSmall,
+                            color: Colors.black26),
+                      ),
+                      Text(
+                        '$currentLength Characters',
+                        style: robotoRegular.copyWith(
+                            fontSize: Dimensions.fontSizeSmall,
+                            color: Colors.black38),
+                      ),
+                    ],
+                  );
+                },
+                decoration: InputDecoration(
+                  hintText: 'Start typing',
+                  hintStyle: robotoRegular.copyWith(
+                      fontSize: 17, color: Colors.black45),
+                  border: InputBorder.none,
+                ),
+              ),
+            ],
           ),
         ),
       ),

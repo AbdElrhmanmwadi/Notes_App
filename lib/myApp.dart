@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:note/addnote.dart';
 import 'package:note/homeScreen.dart';
-import 'package:note/viewNote.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -18,9 +17,9 @@ class MyApp extends StatelessWidget {
             const InputDecorationTheme(prefixIconColor: Colors.grey),
         primarySwatch: Colors.blue,
       ),
-      home: const HomeScreen(),
+      home: HomeScreen(initIndex: 0,),
       routes: {
-        'HomeScreen': (context) => const HomeScreen(),
+        'HomeScreen': (context) => HomeScreen(initIndex: 0,),
         'AddNote': (context) => const Addnote(),
       },
     );
