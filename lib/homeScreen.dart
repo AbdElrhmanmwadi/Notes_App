@@ -130,30 +130,3 @@ class HomeScreen extends StatelessWidget {
 
 
 
-//                                          FormField<bool>(
-//   builder: (FormFieldState<bool> state) {
-//     return InputDecorator(
-//       decoration: InputDecoration(
-//         labelText: 'Label',
-//         errorText: state.hasError ? state.errorText : null,
-//       ),
-//       child: CheckboxListTile(
-//         title: Text('Checkbox title'),
-//         value: state.value ?? false,
-//         onChanged: (bool newValue) {
-//           state.didChange(newValue);
-//         },
-//         controlAffinity: ListTileControlAffinity.leading,
-//       ),
-//     );
-//   },
-//   validator: (value) {
-//     if (value == null) {
-//       return 'Please select a value';
-//     }
-//     return null;
-//   },
-//   onSaved: (value) {
-//     // Handle saving the form value
-//   },
-// )
