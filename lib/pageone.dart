@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_new, prefer_const_constructors
+// ignore_for_file: unnecessary_new, prefer_const_constructors, unused_import, camel_case_types
 
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -30,6 +30,7 @@ class pageOne extends StatelessWidget {
   Widget build(BuildContext context) {
     ThemeData themeData = Theme.of(context);
     return Container(
+        color: themeData.scaffoldBackgroundColor,
         padding: EdgeInsets.symmetric(horizontal: 15),
         width: double.infinity,
         height: MediaQuery.of(context).size.height,
