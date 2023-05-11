@@ -2,11 +2,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:note/controller/sqlConrtoller.dart';
-import 'package:note/controller/taskController.dart';
-import 'package:note/dimensions.dart';
-import 'package:note/sql/SqlDb.dart';
-import 'package:note/styles.dart';
+import 'package:note/src/controller/sqlConrtoller.dart';
+import 'package:note/src/controller/taskController.dart';
+import 'package:note/src/utils/dimensions.dart';
+import 'package:note/src/sql/SqlDb.dart';
+import 'package:note/src/utils/styles.dart';
 
 class bottomShettTask extends StatelessWidget {
   final initValue;
@@ -77,11 +77,8 @@ class bottomShettTask extends StatelessWidget {
                         style: robotoMedium,
                       )),
                   OutlinedButton(
-                      onPressed: ControllerTask.desble.value
-                          ? onPressed
-                          : () {
-                              
-                            },
+                      onPressed:
+                          ControllerTask.desble.value ? onPressed : () {},
                       style: OutlinedButton.styleFrom(
                           disabledForegroundColor: Colors.grey,
                           side: BorderSide.none,

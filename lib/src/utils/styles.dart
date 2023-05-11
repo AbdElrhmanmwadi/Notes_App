@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:note/dimensions.dart';
+import 'package:note/src/utils/dimensions.dart';
 
 const roboto = 'Roboto';
 

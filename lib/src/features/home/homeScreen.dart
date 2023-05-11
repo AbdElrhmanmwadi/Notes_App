@@ -3,12 +3,12 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:note/addnote.dart';
-import 'package:note/bottomShettTask.dart';
-import 'package:note/controller/sqlConrtoller.dart';
-import 'package:note/pageone.dart';
-import 'package:note/pagetwo.dart';
-import 'package:note/sql/SqlDb.dart';
+import 'package:note/src/features/Note/addnote.dart';
+import 'package:note/src/features/Task/widget/bottomShettTask.dart';
+import 'package:note/src/controller/sqlConrtoller.dart';
+import 'package:note/src/features/home/widget/pageone.dart';
+import 'package:note/src/features/home/widget/pagetwo.dart';
+import 'package:note/src/sql/SqlDb.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({Key? key, required this.initIndex}) : super(key: key);
@@ -118,15 +118,3 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-

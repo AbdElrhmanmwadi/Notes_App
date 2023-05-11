@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:note/sql/SqlDb.dart';
+import 'package:note/src/sql/SqlDb.dart';
 
 class SqlController extends GetxController {
   SqlDb sqlDb = SqlDb();

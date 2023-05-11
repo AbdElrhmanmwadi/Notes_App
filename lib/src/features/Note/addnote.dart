@@ -5,13 +5,13 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:note/controller/addNoteController.dart';
-import 'package:note/controller/sqlConrtoller.dart';
-import 'package:note/dimensions.dart';
-import 'package:note/homeScreen.dart';
-import 'package:note/sql/SqlDb.dart';
-import 'package:note/styles.dart';
-import 'package:note/willPopDialog.dart';
+import 'package:note/src/controller/addNoteController.dart';
+import 'package:note/src/controller/sqlConrtoller.dart';
+import 'package:note/src/utils/dimensions.dart';
+import 'package:note/src/features/home/homeScreen.dart';
+import 'package:note/src/sql/SqlDb.dart';
+import 'package:note/src/utils/styles.dart';
+import 'package:note/src/common/widget/willPopDialog.dart';
 
 var sumLength = 0;
 

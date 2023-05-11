@@ -3,18 +3,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
-import 'package:note/CircularProgresIndicator.dart';
-import 'package:note/DeleteBottomSheet.dart';
-import 'package:note/SearchTextFormField.dart';
-import 'package:note/bottomShettForDeleteOrShare.dart';
-import 'package:note/dimensions.dart';
-import 'package:note/homeScreen.dart';
-import 'package:note/sql/SqlDb.dart';
-import 'package:note/styles.dart';
-import 'package:note/viewNote.dart';
+import 'package:note/src/common/widget/bottomShettForDeleteOrShare.dart';
+import 'package:note/src/common/widget/CircularProgresIndicator.dart';
+import 'package:note/src/common/widget/DeleteBottomSheet.dart';
+import 'package:note/src/features/Note/widget/SearchTextFormField.dart';
 
-import 'cardNote.dart';
-import 'controller/sqlConrtoller.dart';
+import 'package:note/src/utils/dimensions.dart';
+import 'package:note/src/features/home/homeScreen.dart';
+import 'package:note/src/sql/SqlDb.dart';
+import 'package:note/src/utils/styles.dart';
+import 'package:note/src/features/Note/viewEditNote.dart';
+
+import '../../Note/widget/cardNote.dart';
+import '../../../controller/sqlConrtoller.dart';
 
 class pageOne extends StatelessWidget {
   const pageOne({
@@ -62,7 +63,7 @@ class pageOne extends StatelessWidget {
                               child: GestureDetector(
                                 onTap: () {
                                   Get.to(
-                                    ViewNote(
+                                    viewEditNote(
                                       title: '${snapshot.data[index]['title']}',
                                       body: '${snapshot.data[index]['note']}',
                                       id: snapshot.data[index]['id'],

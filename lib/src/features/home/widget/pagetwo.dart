@@ -2,15 +2,16 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:note/CircularProgresIndicator.dart';
-import 'package:note/DeleteBottomSheet.dart';
-import 'package:note/bottomShettForDeleteOrShare.dart';
-import 'package:note/bottomShettTask.dart';
-import 'package:note/controller/sqlConrtoller.dart';
-import 'package:note/dimensions.dart';
-import 'package:note/homeScreen.dart';
-import 'package:note/sql/SqlDb.dart';
-import 'package:note/styles.dart';
+import 'package:note/src/common/widget/bottomShettForDeleteOrShare.dart';
+import 'package:note/src/common/widget/CircularProgresIndicator.dart';
+import 'package:note/src/common/widget/DeleteBottomSheet.dart';
+import 'package:note/src/common/widget/bottomShettForDeleteOrShare.dart';
+import 'package:note/src/features/Task/widget/bottomShettTask.dart';
+import 'package:note/src/controller/sqlConrtoller.dart';
+import 'package:note/src/utils/dimensions.dart';
+import 'package:note/src/features/home/homeScreen.dart';
+import 'package:note/src/sql/SqlDb.dart';
+import 'package:note/src/utils/styles.dart';
 
 class pageTwo extends StatelessWidget {
   const pageTwo({
@@ -44,7 +45,7 @@ class pageTwo extends StatelessWidget {
                     shrinkWrap: true,
                     itemCount: snapshot.data.length,
                     itemBuilder: (context, index) => FormField<bool>(
-                          builder: (FormFieldState<bool> state) {
+                          builder: (FormFieldState<bool?> state) {
                             return Card(
                               elevation: .5,
                               shape: OutlineInputBorder(
@@ -121,15 +122,15 @@ class pageTwo extends StatelessWidget {
                               ),
                             );
                           },
-                          validator: (value) {
-                            if (value == null) {
-                              return 'Please select a value';
-                            }
-                            return null;
-                          },
-                          onSaved: (value) {
-                            // Handle saving the form value
-                          },
+                          // validator: (value) {
+                          //   if (value == null) {
+                          //     return 'Please select a value';
+                          //   }
+                          //   return null;
+                          // },
+                          // onSaved: (value) {
+                          //   // Handle saving the form value
+                          // },
                         ));
               } else {
                 return CircularProgresIndicator();

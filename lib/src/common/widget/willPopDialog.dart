@@ -2,7 +2,7 @@
 
  import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:note/controller/addNoteController.dart';
+import 'package:note/src/controller/addNoteController.dart';
 
 class WillPopDialog extends StatelessWidget {
 const WillPopDialog({ Key? key }) : super(key: key);

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:note/homeScreen.dart';
-import 'package:note/sql/SqlDb.dart';
-import 'package:note/styles.dart';
+import 'package:note/src/features/home/homeScreen.dart';
+import 'package:note/src/sql/SqlDb.dart';
+import 'package:note/src/utils/styles.dart';
+
 
 import 'ElevatedButtonSeet.dart';
 

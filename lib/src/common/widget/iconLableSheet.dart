@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:note/dimensions.dart';
-import 'package:note/styles.dart';
+import 'package:note/src/utils/dimensions.dart';
+import 'package:note/src/utils/styles.dart';
 
 class iconLableBottomSheet extends StatelessWidget {
   final icon, lable;

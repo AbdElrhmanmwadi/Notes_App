@@ -2,8 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:note/iconLableSheet.dart';
-import 'package:note/sql/SqlDb.dart';
+import 'package:note/src/common/widget/iconLableSheet.dart';
+import 'package:note/src/sql/SqlDb.dart';
 
 class bottomShettForDeleteOrShare extends StatelessWidget {
   final Widgett;
