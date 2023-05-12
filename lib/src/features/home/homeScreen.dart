@@ -59,7 +59,6 @@ class HomeScreen extends StatelessWidget {
             size: 35,
           ),
         ),
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         endDrawer: Drawer(
           width: double.infinity,
         ),

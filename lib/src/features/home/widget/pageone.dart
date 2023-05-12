@@ -29,9 +29,9 @@ class pageOne extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData themeData = Theme.of(context);
+  
     return Container(
-        color: themeData.scaffoldBackgroundColor,
+        
         padding: EdgeInsets.symmetric(horizontal: 15),
         width: double.infinity,
         height: MediaQuery.of(context).size.height,
@@ -44,58 +44,55 @@ class pageOne extends StatelessWidget {
             height: 15,
           ),
           Expanded(
-            child: GetBuilder(
-              init: SqlController(),
-              builder: (context) => FutureBuilder(
-                future: controller.readData('notes'),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return StaggeredGridView.countBuilder(
-                        staggeredTileBuilder: (index) => StaggeredTile.fit(1),
-                        padding: EdgeInsets.zero,
-                        crossAxisCount: 2,
-                        shrinkWrap: true,
-                        itemCount: snapshot.data.length,
-                        itemBuilder: (BuildContext context, int index) =>
-                            new ClipRRect(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(15.0)),
-                              child: GestureDetector(
-                                onTap: () {
-                                  Get.to(
-                                    viewEditNote(
-                                      title: '${snapshot.data[index]['title']}',
-                                      body: '${snapshot.data[index]['note']}',
-                                      id: snapshot.data[index]['id'],
-                                    ),
-                                  );
-                                },
-                                onLongPress: () {
-                                  Get.bottomSheet(
-                                      barrierColor: Colors.transparent,
-                                      bottomShettForDeleteOrShare(
-                                        sqlDb: sqlDb,
-                                        Widgett: deleteBottomSeet(
-                                          sqlDb: sqlDb,
-                                          function: () async {
-                                            await sqlDb.delete('notes',
-                                                'id=${snapshot.data[index]['id']}');
-                                            Get.back();
-                                          },
-                                        ),
-                                      ));
-                                },
-                                child: CardNote(
+            child: FutureBuilder(
+              future: controller.readData('notes'),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return StaggeredGridView.countBuilder(
+                      staggeredTileBuilder: (index) => StaggeredTile.fit(1),
+                      padding: EdgeInsets.zero,
+                      crossAxisCount: 2,
+                      shrinkWrap: true,
+                      itemCount: snapshot.data.length,
+                      itemBuilder: (BuildContext context, int index) =>
+                          new ClipRRect(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(15.0)),
+                            child: GestureDetector(
+                              onTap: () {
+                                Get.to(
+                                  viewEditNote(
                                     title: '${snapshot.data[index]['title']}',
-                                    Body: '${snapshot.data[index]['note']}',
-                                    date: '${snapshot.data[index]['date']}'),
-                              ),
-                            ));
-                  } else {
-                    return CircularProgresIndicator();
-                  }
-                },
-              ),
+                                    body: '${snapshot.data[index]['note']}',
+                                    id: snapshot.data[index]['id'],
+                                  ),
+                                );
+                              },
+                              onLongPress: () {
+                                Get.bottomSheet(
+                                    barrierColor: Colors.transparent,
+                                    bottomShettForDeleteOrShare(
+                                      sqlDb: sqlDb,
+                                      Widgett: deleteBottomSeet(
+                                        sqlDb: sqlDb,
+                                        function: () async {
+                                          await sqlDb.delete('notes',
+                                              'id=${snapshot.data[index]['id']}');
+                                          Get.back();
+                                        },
+                                      ),
+                                    ));
+                              },
+                              child: CardNote(
+                                  title: '${snapshot.data[index]['title']}',
+                                  Body: '${snapshot.data[index]['note']}',
+                                  date: '${snapshot.data[index]['date']}'),
+                            ),
+                          ));
+                } else {
+                  return CircularProgresIndicator();
+                }
+              },
             ),
           ),
           // Expanded(
