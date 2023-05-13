@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, unused_local_variable, non_constant_identifier_names, unnecessary_string_interpolations, avoid_print, unused_import, prefer_typing_uninitialized_variables, unnecessary_brace_in_string_interps
+// ignore_for_file: prefer_const_constructors, unused_local_variable, non_constant_identifier_names, unnecessary_string_interpolations, avoid_print, unused_import, prefer_typing_uninitialized_variables, unnecessary_brace_in_string_interps, must_be_immutable
 
 import 'dart:developer';
 

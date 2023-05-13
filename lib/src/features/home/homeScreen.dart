@@ -32,6 +32,7 @@ class HomeScreen extends StatelessWidget {
           onPressed: () {
             if (pageIndex.isEven) {
               Get.to(() => Addnote());
+              // sqlDb.deleteMyDatabase();
             } else {
               Get.bottomSheet(
                 Padding(
@@ -41,8 +42,8 @@ class HomeScreen extends StatelessWidget {
                       taskController: taskController,
                       sqlDb: sqlDb,
                       onPressed: () async {
-                        var respones = await sqlDb
-                            .insert('tasks', {'task': taskController.text});
+                        var respones = await sqlDb.insert('tasks',
+                            {'task': taskController.text, 'isComplete': 1});
                         if (respones > 0) {
                           print(respones);
                         }
@@ -51,8 +52,6 @@ class HomeScreen extends StatelessWidget {
                 ),
               );
             }
-
-            // sqlDb.deleteMyDatabase();
           },
           child: Icon(
             Icons.add,
