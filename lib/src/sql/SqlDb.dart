@@ -60,7 +60,7 @@ class SqlDb {
     print('object');
   }
 
-  read(String table) async {
+  read(String table, myWhere) async {
     Database? mydb = await db;
     List<Map> response = await mydb!.query(table, orderBy: 'id DESC');
     return response;
