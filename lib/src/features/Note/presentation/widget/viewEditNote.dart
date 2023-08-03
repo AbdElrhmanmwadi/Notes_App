@@ -3,10 +3,12 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:note/src/controller/addNoteController.dart';
 import 'package:note/src/controller/sqlConrtoller.dart';
+import 'package:note/src/features/Note/presentation/bloc/crud_bloc.dart';
 import 'package:note/src/utils/dimensions.dart';
 import 'package:note/src/features/home/homeScreen.dart';
 import 'package:note/src/sql/SqlDb.dart';
@@ -45,20 +47,32 @@ class viewEditNote extends StatelessWidget {
         leading: BackButton(
           color: Colors.black,
           onPressed: () async {
-            var response = await sqlDb.update(
-                'notes',
-                {
-                  'note': "${bodyController.text}",
-                  'title': "${titleController.text}",
-                  'date': "${DateFormat.MMMEd().format(DateTime.now())}",
-                },
-                'id=$id');
-            print(response);
-            if (response > 0) {
-              Get.to(HomeScreen(
-                initIndex: 0,
-              ));
-            }
+            BlocProvider.of<CrudBloc>(context).add(UpdateNoteEvent(
+              'notes',
+              'id=$id',
+              {
+                'note': "${bodyController.text}",
+                'title': "${titleController.text}",
+                'date': "${DateFormat.MMMEd().format(DateTime.now())}",
+              },
+            ));
+
+            Navigator.of(context).pop();
+
+            // var response = await sqlDb.update(
+            //     'notes',
+            //     {
+            //       'note': "${bodyController.text}",
+            //       'title': "${titleController.text}",
+            //       'date': "${DateFormat.MMMEd().format(DateTime.now())}",
+            //     },
+            //     'id=$id');
+            // print(response);
+            // if (response > 0) {
+            //   Get.to(HomeScreen(
+            //     initIndex: 0,
+            //   ));
+            // }
           },
         ),
         actions: [

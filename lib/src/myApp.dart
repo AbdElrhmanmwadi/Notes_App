@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
-import 'package:note/src/features/Note/presentation/bloc/note_bloc.dart';
+
+import 'package:note/src/features/Note/presentation/bloc/crud_bloc.dart';
 import 'package:note/src/features/Note/presentation/widget/addnote.dart';
 
 import 'package:note/src/features/home/homeScreen.dart';
@@ -12,8 +12,13 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<NoteBloc>(
-      create: (context) => NoteBloc()..add(GetAllNoteEvent()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => CrudBloc()..add(GetAllNoteEvent()),
+        ),
+        // BlocProvider(create: (context) => CrudBloc()),
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',

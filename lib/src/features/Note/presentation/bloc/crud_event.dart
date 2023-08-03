@@ -14,7 +14,7 @@ class AddNoteEvent extends CrudEvent {
 
   AddNoteEvent(this.table, this.value);
   @override
-  List<Object> get props => [];
+  List<Object> get props => [table, value];
 }
 
 class DeleteNoteEvent extends CrudEvent {
@@ -23,15 +23,17 @@ class DeleteNoteEvent extends CrudEvent {
 
   DeleteNoteEvent(this.table, this.myWhere);
   @override
-  List<Object> get props => [];
+  List<Object> get props => [table, myWhere];
 }
+
+class GetAllNoteEvent extends CrudEvent {}
 
 class UpdateNoteEvent extends CrudEvent {
   final String table;
   Map<String, Object?> value;
   final String? myWhere;
 
-  UpdateNoteEvent(this.table, this.myWhere,this.value);
+  UpdateNoteEvent(this.table, this.myWhere, this.value);
   @override
-  List<Object> get props => [];
+  List<Object> get props => [table, value, myWhere!];
 }

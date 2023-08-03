@@ -3,10 +3,13 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:note/src/controller/addNoteController.dart';
 import 'package:note/src/controller/sqlConrtoller.dart';
+import 'package:note/src/features/Note/presentation/bloc/crud_bloc.dart';
+import 'package:note/src/features/Note/presentation/bloc/note_bloc.dart';
 import 'package:note/src/utils/dimensions.dart';
 import 'package:note/src/features/home/homeScreen.dart';
 import 'package:note/src/sql/SqlDb.dart';
@@ -55,18 +58,28 @@ class _AddnoteState extends State<Addnote> {
             icon: Icon(Icons.arrow_back),
             color: Colors.black,
             onPressed: () async {
-              var response = await sqlDb.insert('notes', {
+              BlocProvider.of<CrudBloc>(context).add(AddNoteEvent('notes', {
                 'note': "${bodyController.text}",
                 'title': "${titleController.text}",
                 'date': "${DateFormat.MMMEd().format(DateTime.now())}",
-              });
-              print(response);
-              if (response > 0) {
-                print('insaret');
-                Get.to(HomeScreen(
-                  initIndex: 0,
-                ));
-              }
+              }));
+
+             
+             
+              Navigator.of(context).pop();
+
+              // var response = await sqlDb.insert('notes', {
+              //   'note': "${bodyController.text}",
+              //   'title': "${titleController.text}",
+              //   'date': "${DateFormat.MMMEd().format(DateTime.now())}",
+              // });
+              // print(response);
+              // if (response > 0) {
+              //   print('insaret');
+              //   Get.to(HomeScreen(
+              //     initIndex: 0,
+              //   ));
+              // }
             },
           ),
           actions: [

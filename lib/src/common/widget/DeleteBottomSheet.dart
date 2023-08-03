@@ -4,14 +4,14 @@ import 'package:note/src/features/home/homeScreen.dart';
 import 'package:note/src/sql/SqlDb.dart';
 import 'package:note/src/utils/styles.dart';
 
-
 import 'ElevatedButtonSeet.dart';
 
 class deleteBottomSeet extends StatelessWidget {
   final function;
   const deleteBottomSeet({
     super.key,
-    required this.sqlDb,required this.function,
+    required this.sqlDb,
+    required this.function,
   });
 
   final SqlDb sqlDb;
@@ -47,7 +47,7 @@ class deleteBottomSeet extends StatelessWidget {
                   forgroundColor: Colors.black,
                   backgeroundColor: Colors.grey.withOpacity(.5),
                   function: () {
-                    Get.back();
+                    Navigator.pop(context, 0);
                   },
                   lablel: 'Cancle',
                 ),
