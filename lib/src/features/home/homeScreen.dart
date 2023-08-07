@@ -2,16 +2,17 @@
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:note/src/features/Task/presentation/bloc/task_bloc.dart';
 
-
-import 'package:note/src/features/Task/widget/bottomShettTask.dart';
+import 'package:note/src/features/Task/presentation/widget/bottomShettTask.dart';
 import 'package:note/src/controller/sqlConrtoller.dart';
 import 'package:note/src/features/home/widget/pageone.dart';
 import 'package:note/src/features/home/widget/pagetwo.dart';
 import 'package:note/src/sql/SqlDb.dart';
-
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({Key? key, required this.initIndex}) : super(key: key);
@@ -37,22 +38,29 @@ class HomeScreen extends StatelessWidget {
               Navigator.of(context).pushNamed('AddNote');
               // sqlDb.deleteMyDatabase();
             } else {
-              Get.bottomSheet(
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: bottomShettTask(
-                      hint: 'Enter tap to save task',
-                      taskController: taskController,
-                      sqlDb: sqlDb,
-                      onPressed: () async {
-                        var respones = await sqlDb.insert('tasks',
-                            {'task': taskController.text, 'isComplete': 1});
-                        if (respones > 0) {
-                          print(respones);
-                        }
-                        Get.back();
-                      }),
-                ),
+              showModalBottomSheet(
+                context: context,
+                barrierColor: Colors.transparent,
+                builder: (BuildContext context) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: bottomShettTask(
+                        hint: 'Enter tap to save task',
+                        taskController: taskController,
+                        sqlDb: sqlDb,
+                        onPressed: () async {
+                          final formattedDate =
+                              DateFormat.MMMEd().format(DateTime.now());
+                          print('Formatted Date: $formattedDate');
+
+                          BlocProvider.of<TaskBloc>(context)
+                              .add(AddTaskEvent('tasks', {
+                            'task': taskController.text,
+                            'isComplete': 1,
+                          }));
+                        }),
+                  );
+                },
               );
             }
           },
@@ -119,3 +127,6 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
+
+
+

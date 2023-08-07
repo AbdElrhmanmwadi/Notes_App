@@ -2,7 +2,9 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/gestures.dart';
 import 'package:note/src/features/Note/data/entitis/note_model.dart';
+
 import 'package:note/src/features/Note/data/repositories/note_repository_imp.dart';
+import 'package:note/src/features/Note/presentation/widget/addnote.dart';
 
 import '../../data/datasources/local/note_local_data_source.dart';
 
@@ -10,13 +12,13 @@ part 'crud_event.dart';
 part 'crud_state.dart';
 
 class CrudBloc extends Bloc<CrudEvent, CrudState> {
-  // final AddNoteRepository addNoteRepository;
-  // final UpdateNoteRepository updateNoteRepository;
-  // final DeleteNoteRepository deleteNoteRepository;
+  // final AddNoteUsecase AddNoteUsecase;
+  // final UpdateNoteUsecase UpdateNoteUsecase;
+  // final DeleteNoteUsecase DeleteNoteUsecase;
 
   CrudBloc(
-      // this.addNoteRepository, this.updateNoteRepository,
-      //   this.deleteNoteRepository
+      // this.AddNoteUsecase, this.UpdateNoteUsecase,
+      //   this.DeleteNoteUsecase
       )
       : super(CrudInitial()) {
     on<CrudEvent>((event, emit) async {
@@ -24,10 +26,10 @@ class CrudBloc extends Bloc<CrudEvent, CrudState> {
         emit(LoadingNoteState());
         print('loading add');
 
-        final Addpost =
+        final Addnote =
             await NoteRepositoryImpl(LocalDataSource: NoteLocalDataSourceImpl())
                 .addNote(event.table, event.value);
-        if (Addpost > 0) {
+        if (Addnote > 0) {
           final List<NoteModel> data = await NoteRepositoryImpl(
                   LocalDataSource: NoteLocalDataSourceImpl())
               .getAllNote('notes', '1');
@@ -98,7 +100,7 @@ class CrudBloc extends Bloc<CrudEvent, CrudState> {
           emit(LoadedNoteState(notes: data));
         } catch (e) {
           emit(EmptyNoteState());
-          // Handle the error gracefully...
+          
         }
       }
     });

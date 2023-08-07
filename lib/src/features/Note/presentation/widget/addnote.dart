@@ -1,17 +1,14 @@
 // ignore_for_file: prefer_const_constructors, unused_local_variable, non_constant_identifier_names, unnecessary_string_interpolations, avoid_print
 
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:note/src/controller/addNoteController.dart';
-import 'package:note/src/controller/sqlConrtoller.dart';
 import 'package:note/src/features/Note/presentation/bloc/crud_bloc.dart';
-import 'package:note/src/features/Note/presentation/bloc/note_bloc.dart';
 import 'package:note/src/utils/dimensions.dart';
-import 'package:note/src/features/home/homeScreen.dart';
+
 import 'package:note/src/sql/SqlDb.dart';
 import 'package:note/src/utils/styles.dart';
 import 'package:note/src/common/widget/willPopDialog.dart';

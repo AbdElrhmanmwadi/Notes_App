@@ -1,12 +1,14 @@
-// ignore_for_file: depend_on_referenced_packages
+// ignore_for_file: depend_on_referenced_packages, avoid_print
 
 import 'package:note/src/features/Note/data/entitis/note_model.dart';
+import 'package:note/src/features/Task/data/entitis/task_model.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'package:path/path.dart';
 
 abstract class NoteLocalDataSource {
   Future<List<NoteModel>> getAllNote(String table, myWhere);
+  Future<List<TaskModel>> getAllTask(String table);
   Future<int> deleteNote(String table, String myWhere);
   Future<int> updateNote(
       String table, Map<String, Object?> value, String? myWhere);
@@ -29,7 +31,7 @@ class NoteLocalDataSourceImpl implements NoteLocalDataSource {
     String databasepath = await getDatabasesPath();
     String path = join(databasepath, 'note.db');
     Database mydb = await openDatabase(path,
-        onCreate: _onCreate, version: 1, onUpgrade: _onUpgrade);
+        onCreate: _onCreate, version: 3, onUpgrade: _onUpgrade);
     return mydb;
   }
 
@@ -46,13 +48,15 @@ class NoteLocalDataSourceImpl implements NoteLocalDataSource {
     "id" INTEGER  NOT NULL PRIMARY KEY  AUTOINCREMENT, 
     "note" TEXT NOT NULL,
     "title" TEXT NOT NULL,
-    "date" Datatime
+    "date" Datatime,
+    "isComplete" INTEGER
   )
  ''');
     batch.execute('''
   CREATE TABLE "tasks" (
     "id" INTEGER  NOT NULL PRIMARY KEY  AUTOINCREMENT, 
     "task" TEXT NOT NULL,
+    "isComplete" INTEGER DEFAULT 0,
     "date" Datatime
   )
  ''');
@@ -74,6 +78,9 @@ class NoteLocalDataSourceImpl implements NoteLocalDataSource {
   Future<int> addNote(String table, Map<String, Object?> value) async {
     Database? mydb = await db;
     int response = await mydb!.insert(table, value);
+    print('******************************************** add');
+    print(response);
+    print('********************************************add');
     return response;
   }
 
@@ -101,6 +108,21 @@ class NoteLocalDataSourceImpl implements NoteLocalDataSource {
     Database? mydb = await db;
     int response = await mydb!.update(table, value, where: myWhere);
     return response;
+  }
+
+  @override
+  Future<List<TaskModel>> getAllTask(String table) async {
+    Database? mydb = await db;
+    List<Map> response = await mydb!.query(
+      table,
+    );
+    print('******************************************** Get All task');
+    print(response);
+    print('******************************************** Get All task');
+
+    List<TaskModel> task = response.map((e) => TaskModel.fromJson(e)).toList();
+
+    return task;
   }
 
   // read(String table, myWhere) async {

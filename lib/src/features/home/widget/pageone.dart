@@ -76,7 +76,7 @@ class pageOne extends StatelessWidget {
                                         BlocProvider.of<CrudBloc>(context).add(
                                             DeleteNoteEvent('notes',
                                                 'id=${data[index].id}'));
-                                        Navigator.of(context).pop(2);
+                                        // Navigator.of(context).pop(2);
 
                                         Navigator.of(context).push(
                                           PageRouteBuilder(

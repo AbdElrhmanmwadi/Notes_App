@@ -78,7 +78,7 @@ class bottomShettTask extends StatelessWidget {
                       )),
                   OutlinedButton(
                       onPressed:
-                          ControllerTask.desble.value ? onPressed : () {},
+                          ControllerTask.desble.value ? onPressed : onPressed,
                       style: OutlinedButton.styleFrom(
                           disabledForegroundColor: Colors.grey,
                           side: BorderSide.none,
