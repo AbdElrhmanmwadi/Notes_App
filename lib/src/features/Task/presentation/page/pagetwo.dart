@@ -2,31 +2,30 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+
+import 'package:intl/intl.dart';
+import 'package:note/generated/l10n.dart';
 import 'package:note/src/common/widget/bottomShettForDeleteOrShare.dart';
 import 'package:note/src/common/widget/CircularProgresIndicator.dart';
 import 'package:note/src/common/widget/DeleteBottomSheet.dart';
 import 'package:note/src/features/Task/presentation/bloc/task_bloc.dart';
 import 'package:note/src/features/Task/presentation/widget/bottomShettTask.dart';
-import 'package:note/src/controller/sqlConrtoller.dart';
+
 import 'package:note/src/utils/dimensions.dart';
 import 'package:note/src/features/home/homeScreen.dart';
-import 'package:note/src/sql/SqlDb.dart';
 import 'package:note/src/utils/string/massage.dart';
 import 'package:note/src/utils/styles.dart';
 
-import '../../Task/data/entitis/task_model.dart';
+import '../../data/entitis/task_model.dart';
 
 class pageTwo extends StatefulWidget {
   const pageTwo({
     super.key,
-    required this.controller,
-    required this.sqlDb,
+   
     required this.taskController,
   });
 
-  final SqlController controller;
-  final SqlDb sqlDb;
+
 
   final TextEditingController taskController;
 
@@ -47,7 +46,7 @@ class _pageTwoState extends State<pageTwo> {
 
   @override
   Widget build(BuildContext context) {
-    String? selectedItem;
+    
     return SingleChildScrollView(
         child: Container(
             padding: EdgeInsets.symmetric(horizontal: 15),
@@ -65,7 +64,7 @@ class _pageTwoState extends State<pageTwo> {
                     return Column(
                       children: [
                         taskwidget(
-                            sqlDb: widget.sqlDb,
+                            
                             taskController: widget.taskController,
                             snapshot: incompleteList),
                         ExpansionPanelList(
@@ -77,12 +76,12 @@ class _pageTwoState extends State<pageTwo> {
                                 headerBuilder: (context, isExpanded) {
                                   return ListTile(
                                     title: Text(
-                                      'Completed ${completedList.length} ',
+                                      '${S.of(context).Completed} ${NumberFormat.decimalPattern('ar').format(completedList.length)} ',
                                     ),
                                   );
                                 },
                                 body: taskwidget(
-                                    sqlDb: widget.sqlDb,
+                                   
                                     taskController: widget.taskController,
                                     snapshot: completedList),
                                 isExpanded: isExpandedd,
@@ -112,12 +111,12 @@ class taskwidget extends StatefulWidget {
   final snapshot;
   const taskwidget({
     super.key,
-    required this.sqlDb,
+   
     required this.taskController,
     required this.snapshot,
   });
 
-  final SqlDb sqlDb;
+  
   final TextEditingController taskController;
 
   @override
@@ -125,6 +124,7 @@ class taskwidget extends StatefulWidget {
 }
 
 class _taskwidgetState extends State<taskwidget> {
+  int isComplet = 1;
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
@@ -168,9 +168,9 @@ class _taskwidgetState extends State<taskwidget> {
                         ),
                       );
                     },
-                    sqlDb: widget.sqlDb,
+                    
                   ),
-                  sqlDb: widget.sqlDb,
+               
                 );
               },
             );
@@ -184,7 +184,7 @@ class _taskwidgetState extends State<taskwidget> {
                   padding: const EdgeInsets.all(8.0),
                   child: bottomShettTask(
                     taskController: widget.taskController,
-                    sqlDb: widget.sqlDb,
+                   
                     initValue: widget.snapshot[index].task,
                     onPressed: () async {
                       context.read<TaskBloc>().add(UpdateTaskEvent(
@@ -223,6 +223,7 @@ class _taskwidgetState extends State<taskwidget> {
                       int val = widget.snapshot[index].isComplete == 0 ? 1 : 0;
                       setState(() {
                         widget.snapshot[index].isComplete = val;
+                        isComplet = val;
                       });
 
                       Future.delayed(Duration(seconds: 1), () {
@@ -236,7 +237,12 @@ class _taskwidgetState extends State<taskwidget> {
                   ),
                 ),
                 Expanded(
-                  child: Text('${widget.snapshot[index].task}'),
+                  child: Text(
+                    '${widget.snapshot[index].task}',
+                    style: isComplet == 0
+                        ? TextStyle(decoration: TextDecoration.lineThrough)
+                        : TextStyle(),
+                  ),
                 ),
               ],
             ),

@@ -2,7 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:get/get.dart';
+
+import 'package:note/generated/l10n.dart';
 import 'package:note/src/common/widget/bottomShettForDeleteOrShare.dart';
 import 'package:note/src/common/widget/CircularProgresIndicator.dart';
 import 'package:note/src/common/widget/DeleteBottomSheet.dart';
@@ -10,24 +11,21 @@ import 'package:note/src/features/Note/data/datasources/local/note_local_data_so
 import 'package:note/src/features/Note/data/repositories/note_repository_imp.dart';
 import 'package:note/src/features/Note/domain/repositories/note_repository.dart';
 import 'package:note/src/features/Note/presentation/bloc/crud_bloc.dart';
-import 'package:note/src/features/Note/presentation/widget/cardNote.dart';
-import 'package:note/src/features/Note/presentation/widget/viewEditNote.dart';
+import 'package:note/src/features/Note/presentation/view/widget/cardNote.dart';
+import 'package:note/src/features/Note/presentation/view/widget/viewEditNote.dart';
 import 'package:note/src/utils/dimensions.dart';
 import 'package:note/src/features/home/homeScreen.dart';
-import 'package:note/src/sql/SqlDb.dart';
+
 import 'package:note/src/utils/string/massage.dart';
 import 'package:note/src/utils/styles.dart';
-import '../../../controller/sqlConrtoller.dart';
-import '../../Note/presentation/widget/SearchTextFormField.dart';
+
+import '../widget/SearchTextFormField.dart';
 
 class pageOne extends StatelessWidget {
   const pageOne({
     super.key,
-    required this.controller,
-    required this.sqlDb,
   });
-  final SqlController controller;
-  final SqlDb sqlDb;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -36,7 +34,7 @@ class pageOne extends StatelessWidget {
         height: MediaQuery.of(context).size.height,
         child: Column(children: [
           SearchTextFormField(
-            hintText: 'Search notes',
+            hintText: '${S.of(context).search}',
             icon: Icons.search,
           ),
           SizedBox(
@@ -98,17 +96,27 @@ class pageOne extends StatelessWidget {
                                           ),
                                         );
                                       },
-                                      sqlDb: sqlDb,
                                     ),
-                                    sqlDb: sqlDb,
                                   );
                                 },
                               );
                             },
-                            child: CardNote(
-                                title: data[index].title,
-                                Body: data[index].note,
-                                date: '${data[index].date}'),
+                            child: Hero(
+                              tag: '${data[index].id}',
+                              flightShuttleBuilder: (BuildContext flightContext,
+                                  Animation<double> animation,
+                                  HeroFlightDirection flightDirection,
+                                  BuildContext fromHeroContext,
+                                  BuildContext toHeroContext) {
+                                return Icon(Icons.star, color: Colors.yellow);
+                              },
+                              child: CardNote(
+                                  color: Color(int.parse(
+                                      data[index].backgroundColor)),
+                                  title: data[index].title,
+                                  Body: data[index].note,
+                                  date: '${data[index].date}'),
+                            ),
                           ),
                         ));
               } else if (state is LoadingNoteState) {
@@ -119,87 +127,10 @@ class pageOne extends StatelessWidget {
                 ));
               }
               return Center(
-                child: Text(massage.EmptyNote),
+                child: Text('${S.of(context).emptyNote}'),
               );
             }),
           ),
         ]));
   }
 }
-
-
-
-
-
-
-
-
-
-                
-
-
-
-
-
-
-                // Expanded(
-           //   child: GetBuilder(
-           //       init: SqlController(),
-           //       builder: (context) => FutureBuilder(
-           //             future: controller.readData('notes'),
-           //             builder: (context, snapshot) {
-           //               if (snapshot.hasData) {
-           //                 return StaggeredGridView.countBuilder(
-           //                     staggeredTileBuilder: (index) =>
-           //                         StaggeredTile.fit(1),
-           //                     padding: EdgeInsets.zero,
-           //                     crossAxisCount: 2,
-           //                     shrinkWrap: true,
-           //                     itemCount: snapshot.data.length,
-           //                     itemBuilder: (BuildContext context,
-           //                             int index) =>
-           //                         new ClipRRect(
-           //                           borderRadius: BorderRadius.all(
-           //                               Radius.circular(15.0)),
-           //                           child: GestureDetector(
-           //                             onTap: () {
-           //                               Get.to(
-           //                                 ViewNote(
-           //                                   title:
-           //                                       '${snapshot.data[index]['title']}',
-           //                                   body:
-           //                                       '${snapshot.data[index]['note']}',
-           //                                   id: snapshot.data[index]['id'],
-           //                                 ),
-           //                               );
-           //                             },
-           //                             onLongPress: () {
-           //                               Get.bottomSheet(
-           //                                   barrierColor: Colors.transparent,
-           //                                   bottomShettForDeleteOrShare(
-           //                                     sqlDb: sqlDb,
-           //                                     Widgett: deleteBottomSeet(
-           //                                       sqlDb: sqlDb,
-           //                                       function: () async {
-           //                                         await sqlDb.delete('notes',
-           //                                             'id=${snapshot.data[index]['id']}');
-           //                                         Get.back();
-           //                                       },
-           //                                     ),
-           //                                   ));
-           //                             },
-           //                             child: CardNote(
-           //                                 title:
-           //                                     '${snapshot.data[index]['title']}',
-           //                                 Body:
-           //                                     '${snapshot.data[index]['note']}',
-           //                                 date:
-           //                                     '${snapshot.data[index]['date']}'),
-           //                           ),
-           //                         ));
-           //               } else {
-           //                 return CircularProgresIndicator();
-           //               }
-           //             },
-           //           )),
-           // )

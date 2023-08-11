@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/intl.dart';
 import 'package:note/src/features/Note/data/datasources/local/note_local_data_source.dart';
 
 import 'package:note/src/features/Note/presentation/bloc/crud_bloc.dart';
-import 'package:note/src/features/Note/presentation/widget/addnote.dart';
+import 'package:note/src/features/Note/presentation/cubit/background_color_cubit.dart';
+import 'package:note/src/features/Note/presentation/cubit/isupdate_cubit.dart';
+import 'package:note/src/features/Note/presentation/view/widget/addnote.dart';
+
 import 'package:note/src/features/Task/data/repositories/task_repository_imp.dart';
 import 'package:note/src/features/Task/domain/usecase/add_task.dart';
 import 'package:note/src/features/Task/domain/usecase/get_all_task.dart';
 import 'package:note/src/features/Task/presentation/bloc/task_bloc.dart';
 
 import 'package:note/src/features/home/homeScreen.dart';
+
+import '../generated/l10n.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -23,6 +30,10 @@ class MyApp extends StatelessWidget {
           create: (context) => CrudBloc()..add(GetAllNoteEvent()),
         ),
         BlocProvider(
+          create: (context) => IsupdateCubit(),
+        ),
+        BlocProvider(create: (context) => BackgroundColorCubit()),
+        BlocProvider(
           create: (context) => TaskBloc(
               AddtaskUsecase(TaskRepositoryImpl(
                   LocalDataSource: NoteLocalDataSourceImpl())),
@@ -30,7 +41,6 @@ class MyApp extends StatelessWidget {
                   LocalDataSource: NoteLocalDataSourceImpl())))
             ..add(GetAllTaskEvent('tasks')),
         ),
-        // BlocProvider(create: (context) => CrudBloc()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -43,13 +53,25 @@ class MyApp extends StatelessWidget {
         home: HomeScreen(
           initIndex: 0,
         ),
+        localizationsDelegates: const [
+          S.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        locale: Locale('en'),
+        supportedLocales: S.delegate.supportedLocales,
         routes: {
           'HomeScreen': (context) => HomeScreen(
                 initIndex: 0,
               ),
-          'AddNote': (context) => const Addnote(),
+          'AddNote': (context) => Addnote(),
         },
       ),
     );
   }
+}
+
+bool isArabic() {
+  return Intl.getCurrentLocale() == "er";
 }

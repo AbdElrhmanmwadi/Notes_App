@@ -1,19 +1,22 @@
-
 import 'package:flutter/material.dart';
 import 'package:note/src/utils/dimensions.dart';
 import 'package:note/src/utils/styles.dart';
 
 class CardNote extends StatelessWidget {
-  final title, Body,date;
+  final title, Body, date, color;
   const CardNote({
-    super.key,required this.title,required this.Body,required this.date,
+    super.key,
+    required this.title,
+    required this.Body,
+    required this.date,
+    this.color,
   });
 
   @override
   Widget build(BuildContext context) {
     return Card(
       borderOnForeground: false,
-      color: Colors.white,
+      color: color,
       elevation: .9,
       shape: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
@@ -21,7 +24,7 @@ class CardNote extends StatelessWidget {
         padding: EdgeInsets.all(15),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
-          color: Colors.white.withOpacity(1),
+          color: Colors.white.withOpacity(.1),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,5 +1,5 @@
 import 'package:intl/intl.dart';
-import 'package:note/src/features/Note/domain/entities/Note.dart';
+import 'package:note/src/features/Note/domain/entities/note.dart';
 
 class NoteModel extends Note {
   NoteModel({
@@ -7,7 +7,13 @@ class NoteModel extends Note {
     required String note,
     required String title,
     required DateTime date,
-  }) : super(id: id, note: note, title: title, date: date);
+    required String backgroundColor,
+  }) : super(
+            id: id,
+            note: note,
+            title: title,
+            date: date,
+            backgroundColor: backgroundColor);
 
   factory NoteModel.fromMap(Map<dynamic, dynamic> map) {
     String inputDateString = map['date'];
@@ -20,6 +26,7 @@ class NoteModel extends Note {
       note: map['note'],
       title: map['title'],
       date: parsedDate,
+      backgroundColor: map['backgroundColor'],
     );
   }
 
@@ -31,6 +38,7 @@ class NoteModel extends Note {
       'note': note,
       'title': title,
       'date': formattedDate,
+      'backgroundColor':backgroundColor
     };
   }
 }

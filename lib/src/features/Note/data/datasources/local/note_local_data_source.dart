@@ -31,13 +31,13 @@ class NoteLocalDataSourceImpl implements NoteLocalDataSource {
     String databasepath = await getDatabasesPath();
     String path = join(databasepath, 'note.db');
     Database mydb = await openDatabase(path,
-        onCreate: _onCreate, version: 3, onUpgrade: _onUpgrade);
+        onCreate: _onCreate, version: 4, onUpgrade: _onUpgrade);
     return mydb;
   }
 
   _onUpgrade(Database db, int oldversion, int newversion) async {
     // await db.execute("ALTER TABLE notes ADD COLUMN  title text ");
-    await db.execute("ALTER TABLE tasks ADD COLUMN  isComplete INTEGER  ");
+   // await db.execute("ALTER TABLE tasks ADD COLUMN  backgroundColor TEXT  ");
     print("onUpgrade =====================================");
   }
 
@@ -49,7 +49,8 @@ class NoteLocalDataSourceImpl implements NoteLocalDataSource {
     "note" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "date" Datatime,
-    "isComplete" INTEGER
+    "isComplete" INTEGER,
+    "backgroundColor" TEXT
   )
  ''');
     batch.execute('''

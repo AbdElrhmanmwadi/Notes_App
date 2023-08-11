@@ -4,28 +4,29 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:note/generated/l10n.dart';
+import 'package:note/src/features/Note/presentation/cubit/isupdate_cubit.dart';
 import 'package:note/src/features/Task/presentation/bloc/task_bloc.dart';
 
 import 'package:note/src/features/Task/presentation/widget/bottomShettTask.dart';
-import 'package:note/src/controller/sqlConrtoller.dart';
-import 'package:note/src/features/home/widget/pageone.dart';
-import 'package:note/src/features/home/widget/pagetwo.dart';
-import 'package:note/src/sql/SqlDb.dart';
+
+import 'package:note/src/features/Note/presentation/view/page/pageone.dart';
+import 'package:note/src/features/Task/presentation/page/pagetwo.dart';
+
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({Key? key, required this.initIndex}) : super(key: key);
   final initIndex;
-  SqlDb sqlDb = SqlDb();
+  
 
-  SqlController controller = Get.put(SqlController());
   TextEditingController taskController = TextEditingController();
 
   var pageIndex = 0;
   bool? CompletTask = false;
   @override
   Widget build(BuildContext context) {
+    IsupdateCubit cubitisUpdate = BlocProvider.of<IsupdateCubit>(context);
     return DefaultTabController(
       initialIndex: initIndex,
       length: 2,
@@ -34,7 +35,7 @@ class HomeScreen extends StatelessWidget {
           elevation: 0,
           backgroundColor: Colors.amberAccent,
           onPressed: () {
-            if (pageIndex.isEven) {
+            if (cubitisUpdate.pageInde.isEven) {
               Navigator.of(context).pushNamed('AddNote');
               // sqlDb.deleteMyDatabase();
             } else {
@@ -45,9 +46,8 @@ class HomeScreen extends StatelessWidget {
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: bottomShettTask(
-                        hint: 'Enter tap to save task',
+                        hint: '${S.of(context).task_hint}',
                         taskController: taskController,
-                        sqlDb: sqlDb,
                         onPressed: () async {
                           final formattedDate =
                               DateFormat.MMMEd().format(DateTime.now());
@@ -58,6 +58,7 @@ class HomeScreen extends StatelessWidget {
                             'task': taskController.text,
                             'isComplete': 1,
                           }));
+                          Navigator.pop(context);
                         }),
                   );
                 },
@@ -84,8 +85,8 @@ class HomeScreen extends StatelessWidget {
             labelColor: Colors.yellow,
             indicatorColor: Colors.transparent,
             onTap: (value) {
-              pageIndex = value;
-              print(pageIndex);
+              cubitisUpdate.pageIndex(value);
+              print(value);
             },
             tabs: [
               Icon(
@@ -116,17 +117,11 @@ class HomeScreen extends StatelessWidget {
           physics: NeverScrollableScrollPhysics(),
           dragStartBehavior: DragStartBehavior.down,
           children: [
-            pageOne(controller: controller, sqlDb: sqlDb),
-            pageTwo(
-                controller: controller,
-                sqlDb: sqlDb,
-                taskController: taskController),
+            pageOne(),
+            pageTwo(taskController: taskController),
           ],
         ),
       ),
     );
   }
 }
-
-
-

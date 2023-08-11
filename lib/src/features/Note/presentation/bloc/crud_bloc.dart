@@ -4,7 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:note/src/features/Note/data/entitis/note_model.dart';
 
 import 'package:note/src/features/Note/data/repositories/note_repository_imp.dart';
-import 'package:note/src/features/Note/presentation/widget/addnote.dart';
+import 'package:note/src/features/Note/presentation/view/widget/addnote.dart';
 
 import '../../data/datasources/local/note_local_data_source.dart';
 
@@ -30,17 +30,14 @@ class CrudBloc extends Bloc<CrudEvent, CrudState> {
             await NoteRepositoryImpl(LocalDataSource: NoteLocalDataSourceImpl())
                 .addNote(event.table, event.value);
         if (Addnote > 0) {
-          final List<NoteModel> data = await NoteRepositoryImpl(
-                  LocalDataSource: NoteLocalDataSourceImpl())
-              .getAllNote('notes', '1');
-
-          print('${data}, add');
           try {
             final List<NoteModel> data = await NoteRepositoryImpl(
               LocalDataSource: NoteLocalDataSourceImpl(),
             ).getAllNote('notes', '');
+            print('${data}, add');
             emit(LoadedNoteState(notes: data));
           } catch (e) {
+            print(" eeeeeeeeeeeeeeeeeee $e");
             emit(EmptyNoteState());
             // Handle the error gracefully...
           }
@@ -100,7 +97,6 @@ class CrudBloc extends Bloc<CrudEvent, CrudState> {
           emit(LoadedNoteState(notes: data));
         } catch (e) {
           emit(EmptyNoteState());
-          
         }
       }
     });
