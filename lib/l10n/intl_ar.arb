@@ -7,7 +7,33 @@
     "emptyNote":"اكتب ملاحظتك الاولى",
     "hintAddNote":"العنوان",
     "Starttyping":"ابدأ في الكتابة ",
-    "Characters": "حرف"
+    "Characters": "حرف",
+    
+    "Sort":"ترتيب",
+    "Huge":"ضخم",
+    "small":"صغير",
+    "Large":"كبير",
+    "Medium":"متوسط",
+    "FontSize":"حجم الخط",
+    "DeletenotesinApp":"حذف جميع البيانات",
+    "APP SERVICES":"خدمات التطبيق",
+    "Notes":"الملاحظات",
+    "gridview":"عرض شبكة",
+    "Listview":"عرض قائمة",
+    "layout":"التنسيق",
+    "Bymodificationdate":"حسب تاريخ التعديل",
+    "ByCreationdate":"حسب تاريخ الانشاء",
+    "STYLE": "النمط",
+    "APPSERVICES":"خدمات التطبيق"
+    ,"Areyour":"هل أنت متأكد أنك تريد تجاهل التغييرات الخاصة بك؟"
+   ,"Keep":"الاحتفاظ",
+   "Discard":"تجاهل"
+
+
+
+
+
+    
 
 
     

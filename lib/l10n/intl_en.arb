@@ -8,7 +8,30 @@
     "hintAddNote":"Title",
     "Starttyping":"Start typing",
 
-    "Characters":"Characters"
+    "Characters":"Characters",
+    "Sort":"Sort",
+    "Huge":"Huge",
+    "small":"small",
+    "Large":"Large",
+    "Medium":"Medium",
+    "FontSize":"Font Size",
+    "DeletenotesinApp":"Delete All data in App",
+    "APPSERVICES":"APP SERVICES",
+    "Notes":"Notes",
+    "gridview":"Grid view",
+    "Listview":"List view",
+    "layout":"layout",
+    "Bymodificationdate":"By modification date",
+    "ByCreationdate":"By Creation date",
+    "STYLE":"STYLE",
+    "Areyour":"Are your sure you want discard your changes ?",
+    "Keep":"Keep",
+    "Discard":"Discard"
+    
+    
+    
+
 
     
-}
+}                
+

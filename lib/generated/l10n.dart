@@ -139,6 +139,186 @@ class S {
       args: [],
     );
   }
+
+  /// `Sort`
+  String get Sort {
+    return Intl.message(
+      'Sort',
+      name: 'Sort',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Huge`
+  String get Huge {
+    return Intl.message(
+      'Huge',
+      name: 'Huge',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `small`
+  String get small {
+    return Intl.message(
+      'small',
+      name: 'small',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Large`
+  String get Large {
+    return Intl.message(
+      'Large',
+      name: 'Large',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Medium`
+  String get Medium {
+    return Intl.message(
+      'Medium',
+      name: 'Medium',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Font Size`
+  String get FontSize {
+    return Intl.message(
+      'Font Size',
+      name: 'FontSize',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delete All data in App`
+  String get DeletenotesinApp {
+    return Intl.message(
+      'Delete All data in App',
+      name: 'DeletenotesinApp',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `APP SERVICES`
+  String get APPSERVICES {
+    return Intl.message(
+      'APP SERVICES',
+      name: 'APPSERVICES',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Notes`
+  String get Notes {
+    return Intl.message(
+      'Notes',
+      name: 'Notes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Grid view`
+  String get gridview {
+    return Intl.message(
+      'Grid view',
+      name: 'gridview',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `List view`
+  String get Listview {
+    return Intl.message(
+      'List view',
+      name: 'Listview',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `layout`
+  String get layout {
+    return Intl.message(
+      'layout',
+      name: 'layout',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `By modification date`
+  String get Bymodificationdate {
+    return Intl.message(
+      'By modification date',
+      name: 'Bymodificationdate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `By Creation date`
+  String get ByCreationdate {
+    return Intl.message(
+      'By Creation date',
+      name: 'ByCreationdate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `STYLE`
+  String get STYLE {
+    return Intl.message(
+      'STYLE',
+      name: 'STYLE',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are your sure you want discard your changes ?`
+  String get Areyour {
+    return Intl.message(
+      'Are your sure you want discard your changes ?',
+      name: 'Areyour',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Keep`
+  String get Keep {
+    return Intl.message(
+      'Keep',
+      name: 'Keep',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Discard`
+  String get Discard {
+    return Intl.message(
+      'Discard',
+      name: 'Discard',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

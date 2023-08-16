@@ -6,12 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:intl/intl.dart';
+import 'package:note/generated/l10n.dart';
 import 'package:note/src/common/fuction/function..dart';
 import 'package:note/src/common/listColor.dart';
 import 'package:note/src/common/widget/bottomSheetColor.dart';
 
 import 'package:note/src/features/Note/presentation/bloc/crud_bloc.dart';
 import 'package:note/src/features/Note/presentation/cubit/background_color_cubit.dart';
+import 'package:note/src/features/Note/presentation/cubit/fontsize_cubit.dart';
 import 'package:note/src/features/Note/presentation/cubit/isupdate_cubit.dart';
 import 'package:note/src/utils/dimensions.dart';
 import 'package:note/src/features/home/homeScreen.dart';
@@ -21,6 +23,7 @@ import 'package:note/src/utils/styles.dart';
 class viewEditNote extends StatelessWidget {
   final String title, body;
   final id;
+
   viewEditNote({
     Key? key,
     required this.title,
@@ -42,6 +45,7 @@ class viewEditNote extends StatelessWidget {
     bodyController.text = body;
 
     Color backgroundColors = Colors.white;
+
     return Hero(
       tag: '$id',
       child: BlocBuilder<BackgroundColorCubit, BackgroundColorState>(
@@ -64,7 +68,7 @@ class viewEditNote extends StatelessWidget {
                       {
                         'note': "${bodyController.text}",
                         'title': "${titleController.text}",
-                        'date': "${DateFormat.MMMEd().format(DateTime.now())}",
+                        // 'date': "${DateFormat.MMMEd().format(DateTime.now())}",
                         "backgroundColor": "${state.color.value}"
                       },
                     ));
@@ -101,79 +105,92 @@ class viewEditNote extends StatelessWidget {
                   )
                 ],
               ),
-              body: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      TextFormField(
-                        controller: titleController,
-                        onTap: () => cubitisUpdate.isUpdate(true),
-                        onTapOutside: (event) => cubitisUpdate.isUpdate(false),
-                        style: TextStyle(
-                          color: textColor,
-                          fontSize: 25,
-                        ),
-                        maxLines: null,
-                        decoration: InputDecoration(
-                          hintText: 'Title',
-                          hintStyle: robotoRegular.copyWith(
-                              fontSize: 22, color: Colors.black45),
-                          border: InputBorder.none,
+              body: BlocBuilder<FontsizeCubit, FontsizeState>(
+                builder: (context, state) {
+                  if (state is changeFontSizeState) {
+                    return Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            TextFormField(
+                              controller: titleController,
+                              onTap: () => cubitisUpdate.isUpdate(true),
+                              onTapOutside: (event) =>
+                                  cubitisUpdate.isUpdate(false),
+                              style: TextStyle(
+                                color: textColor,
+                                fontSize: state.fontSize,
+                              ),
+                              maxLines: null,
+                              decoration: InputDecoration(
+                                hintText: '${S.of(context).hintAddNote}',
+                                hintStyle: robotoRegular.copyWith(
+                                    fontSize: state.fontSize,
+                                    color: Colors.black45),
+                                border: InputBorder.none,
+                              ),
+                            ),
+                            TextFormField(
+                              keyboardAppearance: Brightness.light,
+                              onTap: () => cubitisUpdate.isUpdate(true),
+                              onTapOutside: (event) {
+                                cubitisUpdate.isUpdate(false);
+                                FocusManager.instance.primaryFocus?.unfocus();
+                              },
+                              controller: bodyController,
+                              style: TextStyle(
+                                color: textColor,
+                                fontSize: state.fontSize,
+                              ),
+                              maxLines: null,
+                              maxLength: 1000,
+                              buildCounter: (context,
+                                  {required currentLength,
+                                  required isFocused,
+                                  required maxLength}) {
+                                return Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Text(
+                                      '${DateFormat('MMM d  h:mm a').format(DateTime.now())}',
+                                      style: robotoRegular.copyWith(
+                                          fontSize: Dimensions.fontSizeLarge,
+                                          color: textColor),
+                                    ),
+                                    Text(
+                                      '  |  ',
+                                      style: robotoRegular.copyWith(
+                                          fontSize: Dimensions.fontSizeLarge,
+                                          color: Colors.black26),
+                                    ),
+                                    Text(
+                                      '$currentLength ${S.of(context).Characters}',
+                                      style: robotoRegular.copyWith(
+                                          fontSize: Dimensions.fontSizeLarge,
+                                          color: textColor),
+                                    ),
+                                  ],
+                                );
+                              },
+                              decoration: InputDecoration(
+                                hintText: '${S.of(context).Starttyping}',
+                                hintStyle: robotoRegular.copyWith(
+                                    fontSize: state.fontSize,
+                                    color: Colors.black45),
+                                border: InputBorder.none,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      TextFormField(
-                        keyboardAppearance: Brightness.light,
-                        onTap: () => cubitisUpdate.isUpdate(true),
-                        onTapOutside: (event) {
-                          cubitisUpdate.isUpdate(false);
-                          FocusManager.instance.primaryFocus?.unfocus();
-                        },
-                        controller: bodyController,
-                        style: TextStyle(
-                          color: textColor,
-                          fontSize: 20,
-                        ),
-                        maxLines: null,
-                        maxLength: 1000,
-                        buildCounter: (context,
-                            {required currentLength,
-                            required isFocused,
-                            required maxLength}) {
-                          return Row(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Text(
-                                '${DateFormat('MMM d  h:mm a').format(DateTime.now())}',
-                                style: robotoRegular.copyWith(
-                                    fontSize: Dimensions.fontSizeSmall,
-                                    color: textColor),
-                              ),
-                              Text(
-                                '  |  ',
-                                style: robotoRegular.copyWith(
-                                    fontSize: Dimensions.fontSizeSmall,
-                                    color: Colors.black26),
-                              ),
-                              Text(
-                                '$currentLength Characters',
-                                style: robotoRegular.copyWith(
-                                    fontSize: Dimensions.fontSizeSmall,
-                                    color: textColor),
-                              ),
-                            ],
-                          );
-                        },
-                        decoration: InputDecoration(
-                          hintText: 'Start typing',
-                          hintStyle: robotoRegular.copyWith(
-                              fontSize: 17, color: textColor),
-                          border: InputBorder.none,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                    );
+                  } else {
+                    return Center(
+                      child: Text('data'),
+                    );
+                  }
+                },
               ),
             );
           }

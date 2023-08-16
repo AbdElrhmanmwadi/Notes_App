@@ -22,15 +22,37 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+        "APPSERVICES": MessageLookupByLibrary.simpleMessage("APP SERVICES"),
+        "Areyour": MessageLookupByLibrary.simpleMessage(
+            "Are your sure you want discard your changes ?"),
+        "ByCreationdate":
+            MessageLookupByLibrary.simpleMessage("By Creation date"),
+        "Bymodificationdate":
+            MessageLookupByLibrary.simpleMessage("By modification date"),
         "Characters": MessageLookupByLibrary.simpleMessage("Characters"),
         "Completed": MessageLookupByLibrary.simpleMessage("Completed"),
+        "DeletenotesinApp":
+            MessageLookupByLibrary.simpleMessage("Delete All data in App"),
+        "Discard": MessageLookupByLibrary.simpleMessage("Discard"),
         "Done": MessageLookupByLibrary.simpleMessage("Done"),
+        "FontSize": MessageLookupByLibrary.simpleMessage("Font Size"),
+        "Huge": MessageLookupByLibrary.simpleMessage("Huge"),
+        "Keep": MessageLookupByLibrary.simpleMessage("Keep"),
+        "Large": MessageLookupByLibrary.simpleMessage("Large"),
+        "Listview": MessageLookupByLibrary.simpleMessage("List view"),
+        "Medium": MessageLookupByLibrary.simpleMessage("Medium"),
+        "Notes": MessageLookupByLibrary.simpleMessage("Notes"),
+        "STYLE": MessageLookupByLibrary.simpleMessage("STYLE"),
         "SetReminder": MessageLookupByLibrary.simpleMessage("Set reminder"),
+        "Sort": MessageLookupByLibrary.simpleMessage("Sort"),
         "Starttyping": MessageLookupByLibrary.simpleMessage("Start typing"),
         "emptyNote":
             MessageLookupByLibrary.simpleMessage("Write your first Note"),
+        "gridview": MessageLookupByLibrary.simpleMessage("Grid view"),
         "hintAddNote": MessageLookupByLibrary.simpleMessage("Title"),
+        "layout": MessageLookupByLibrary.simpleMessage("layout"),
         "search": MessageLookupByLibrary.simpleMessage("Search notes"),
+        "small": MessageLookupByLibrary.simpleMessage("small"),
         "task_hint":
             MessageLookupByLibrary.simpleMessage("Enter tap to save task")
       };

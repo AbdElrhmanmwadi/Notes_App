@@ -9,47 +9,36 @@ abstract class IsupdateState extends Equatable {
   List<Object> get props => [];
 }
 
- class IsUpdateInitialState extends IsupdateState {
-  bool  isshow=false;
+class IsUpdateInitialState extends IsupdateState {
+  bool isshow = false;
 
   IsUpdateInitialState(this.isshow);
-   @override
+  @override
   List<Object> get props => [isshow];
-  
+}
 
-
-
- }
- class canPopstate extends IsupdateState {
-  bool  canPop=false;
+class canPopstate extends IsupdateState {
+  bool canPop = false;
 
   canPopstate(this.canPop);
-   @override
+  @override
   List<Object> get props => [canPop];
+}
 
-
-
-
- }
- class pageIndexState extends IsupdateState {
-  int  pageIndex=0;
+class pageIndexState extends IsupdateState {
+  int pageIndex = 0;
 
   pageIndexState(this.pageIndex);
-   @override
+  @override
   List<Object> get props => [pageIndex];
+}
 
-
-
-
- }
- class desbleButtonState extends IsupdateState {
-  bool  desbleButton=true;
+class desbleButtonState extends IsupdateState {
+  bool desbleButton = true;
 
   desbleButtonState(this.desbleButton);
-   @override
+  @override
   List<Object> get props => [desbleButton];
+}
 
 
-
-
- }

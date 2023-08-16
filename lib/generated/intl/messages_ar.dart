@@ -22,15 +22,37 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+        "APPSERVICES": MessageLookupByLibrary.simpleMessage("خدمات التطبيق"),
+        "Areyour": MessageLookupByLibrary.simpleMessage(
+            "هل أنت متأكد أنك تريد تجاهل التغييرات الخاصة بك؟"),
+        "ByCreationdate":
+            MessageLookupByLibrary.simpleMessage("حسب تاريخ الانشاء"),
+        "Bymodificationdate":
+            MessageLookupByLibrary.simpleMessage("حسب تاريخ التعديل"),
         "Characters": MessageLookupByLibrary.simpleMessage("حرف"),
         "Completed": MessageLookupByLibrary.simpleMessage("اكتمل"),
+        "DeletenotesinApp":
+            MessageLookupByLibrary.simpleMessage("حذف جميع البيانات"),
+        "Discard": MessageLookupByLibrary.simpleMessage("تجاهل"),
         "Done": MessageLookupByLibrary.simpleMessage("تم"),
+        "FontSize": MessageLookupByLibrary.simpleMessage("حجم الخط"),
+        "Huge": MessageLookupByLibrary.simpleMessage("ضخم"),
+        "Keep": MessageLookupByLibrary.simpleMessage("الاحتفاظ"),
+        "Large": MessageLookupByLibrary.simpleMessage("كبير"),
+        "Listview": MessageLookupByLibrary.simpleMessage("عرض قائمة"),
+        "Medium": MessageLookupByLibrary.simpleMessage("متوسط"),
+        "Notes": MessageLookupByLibrary.simpleMessage("الملاحظات"),
+        "STYLE": MessageLookupByLibrary.simpleMessage("النمط"),
         "SetReminder": MessageLookupByLibrary.simpleMessage("تعيين تذكير"),
+        "Sort": MessageLookupByLibrary.simpleMessage("ترتيب"),
         "Starttyping": MessageLookupByLibrary.simpleMessage("ابدأ في الكتابة "),
         "emptyNote":
             MessageLookupByLibrary.simpleMessage("اكتب ملاحظتك الاولى"),
+        "gridview": MessageLookupByLibrary.simpleMessage("عرض شبكة"),
         "hintAddNote": MessageLookupByLibrary.simpleMessage("العنوان"),
+        "layout": MessageLookupByLibrary.simpleMessage("التنسيق"),
         "search": MessageLookupByLibrary.simpleMessage("البحث عن ملاحظات"),
+        "small": MessageLookupByLibrary.simpleMessage("صغير"),
         "task_hint":
             MessageLookupByLibrary.simpleMessage("ادخل المهام التى تريد حفظها")
       };

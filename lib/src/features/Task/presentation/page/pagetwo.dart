@@ -8,6 +8,7 @@ import 'package:note/generated/l10n.dart';
 import 'package:note/src/common/widget/bottomShettForDeleteOrShare.dart';
 import 'package:note/src/common/widget/CircularProgresIndicator.dart';
 import 'package:note/src/common/widget/DeleteBottomSheet.dart';
+import 'package:note/src/features/Task/presentation/bloc/cubit/controller_cubit.dart';
 import 'package:note/src/features/Task/presentation/bloc/task_bloc.dart';
 import 'package:note/src/features/Task/presentation/widget/bottomShettTask.dart';
 
@@ -21,11 +22,8 @@ import '../../data/entitis/task_model.dart';
 class pageTwo extends StatefulWidget {
   const pageTwo({
     super.key,
-   
     required this.taskController,
   });
-
-
 
   final TextEditingController taskController;
 
@@ -38,17 +36,12 @@ class _pageTwoState extends State<pageTwo> {
   List<TaskModel> completedList = [];
   List<TaskModel> incompleteList = [];
 
-  void _onExpansionChange(bool newExpandedState) {
-    setState(() {
-      isExpandedd = newExpandedState;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    
+    var controllerCubit = BlocProvider.of<ControllerCubit>(context);
     return SingleChildScrollView(
         child: Container(
+            color: Theme.of(context).scaffoldBackgroundColor,
             padding: EdgeInsets.symmetric(horizontal: 15),
             child: Column(children: [
               BlocBuilder<TaskBloc, TaskState>(
@@ -64,34 +57,35 @@ class _pageTwoState extends State<pageTwo> {
                     return Column(
                       children: [
                         taskwidget(
-                            
                             taskController: widget.taskController,
                             snapshot: incompleteList),
-                        ExpansionPanelList(
-                            elevation: 0,
-                            children: [
-                              ExpansionPanel(
-                                backgroundColor:
-                                    Theme.of(context).scaffoldBackgroundColor,
-                                headerBuilder: (context, isExpanded) {
-                                  return ListTile(
+                        BlocBuilder<ControllerCubit, ControllerState>(
+                          builder: (context, state) {
+                            return Column(
+                              children: [
+                                ListTile(
                                     title: Text(
                                       '${S.of(context).Completed} ${NumberFormat.decimalPattern('ar').format(completedList.length)} ',
                                     ),
-                                  );
-                                },
-                                body: taskwidget(
-                                   
-                                    taskController: widget.taskController,
-                                    snapshot: completedList),
-                                isExpanded: isExpandedd,
-                              )
-                            ],
-                            expansionCallback: (panelIndex, isExpanded) {
-                              _onExpansionChange(!isExpanded);
-
-                              panelIndex = 0;
-                            }),
+                                    leading: controllerCubit.isExpande
+                                        ? Icon(Icons.arrow_drop_up)
+                                        : Icon(Icons.arrow_drop_down),
+                                    onTap: () {
+                                      controllerCubit.isExpanded(
+                                          !controllerCubit.isExpande);
+                                    }),
+                                if (controllerCubit.isExpande)
+                                  BlocBuilder<TaskBloc, TaskState>(
+                                    builder: (context, state) {
+                                      return taskwidget(
+                                          taskController: widget.taskController,
+                                          snapshot: completedList);
+                                    },
+                                  )
+                              ],
+                            );
+                          },
+                        ),
                       ],
                     );
                   } else if (state is LoadingTaskState) {
@@ -111,13 +105,13 @@ class taskwidget extends StatefulWidget {
   final snapshot;
   const taskwidget({
     super.key,
-   
     required this.taskController,
     required this.snapshot,
+    this.time,
   });
 
-  
   final TextEditingController taskController;
+  final time;
 
   @override
   State<taskwidget> createState() => _taskwidgetState();
@@ -168,35 +162,40 @@ class _taskwidgetState extends State<taskwidget> {
                         ),
                       );
                     },
-                    
                   ),
-               
                 );
               },
             );
           },
           onTap: () {
             showModalBottomSheet(
+              isScrollControlled: true,
               context: context,
               barrierColor: Colors.transparent,
               builder: (BuildContext context) {
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: bottomShettTask(
-                    taskController: widget.taskController,
-                   
-                    initValue: widget.snapshot[index].task,
-                    onPressed: () async {
-                      context.read<TaskBloc>().add(UpdateTaskEvent(
-                            'tasks',
-                            'id=${widget.snapshot[index].id}',
-                            {
-                              'task': "${widget.taskController.text}",
-                            },
-                          ));
+                return SingleChildScrollView(
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      left: 10, right: 10,
+                      bottom: MediaQuery.of(context)
+                          .viewInsets
+                          .bottom, // Adjust for keyboard
+                    ),
+                    child: bottomShettTask(
+                      taskController: widget.taskController,
+                      initValue: widget.snapshot[index].task,
+                      onPressed: () async {
+                        context.read<TaskBloc>().add(UpdateTaskEvent(
+                              'tasks',
+                              'id=${widget.snapshot[index].id}',
+                              {
+                                'task': "${widget.taskController.text}",
+                              },
+                            ));
 
-                      Navigator.pop(context);
-                    },
+                        Navigator.pop(context);
+                      },
+                    ),
                   ),
                 );
               },
@@ -221,6 +220,7 @@ class _taskwidgetState extends State<taskwidget> {
                         widget.snapshot[index].isComplete == 0 ? true : false,
                     onChanged: (_) {
                       int val = widget.snapshot[index].isComplete == 0 ? 1 : 0;
+
                       setState(() {
                         widget.snapshot[index].isComplete = val;
                         isComplet = val;
@@ -233,15 +233,20 @@ class _taskwidgetState extends State<taskwidget> {
                           {'isComplete': val},
                         ));
                       });
-                    }, // Keep onChanged as an empty function
+                    },
                   ),
                 ),
                 Expanded(
-                  child: Text(
-                    '${widget.snapshot[index].task}',
-                    style: isComplet == 0
-                        ? TextStyle(decoration: TextDecoration.lineThrough)
-                        : TextStyle(),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${widget.snapshot[index].task}',
+                        style: isComplet == 0
+                            ? TextStyle(decoration: TextDecoration.lineThrough)
+                            : TextStyle(),
+                      ),
+                    ],
                   ),
                 ),
               ],

@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 import 'package:note/generated/l10n.dart';
+import 'package:note/src/common/SharedPref/sharedPref.dart';
+import 'package:note/src/common/listColor.dart';
 import 'package:note/src/common/widget/bottomShettForDeleteOrShare.dart';
 import 'package:note/src/common/widget/CircularProgresIndicator.dart';
 import 'package:note/src/common/widget/DeleteBottomSheet.dart';
@@ -11,6 +13,7 @@ import 'package:note/src/features/Note/data/datasources/local/note_local_data_so
 import 'package:note/src/features/Note/data/repositories/note_repository_imp.dart';
 import 'package:note/src/features/Note/domain/repositories/note_repository.dart';
 import 'package:note/src/features/Note/presentation/bloc/crud_bloc.dart';
+import 'package:note/src/features/Note/presentation/cubit/background_color_cubit.dart';
 import 'package:note/src/features/Note/presentation/view/widget/cardNote.dart';
 import 'package:note/src/features/Note/presentation/view/widget/viewEditNote.dart';
 import 'package:note/src/utils/dimensions.dart';
@@ -29,6 +32,7 @@ class pageOne extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+        color: Theme.of(context).scaffoldBackgroundColor,
         padding: EdgeInsets.symmetric(horizontal: 15),
         width: double.infinity,
         height: MediaQuery.of(context).size.height,
@@ -43,10 +47,14 @@ class pageOne extends StatelessWidget {
           Expanded(
             child: BlocBuilder<CrudBloc, CrudState>(builder: (context, state) {
               if (state is LoadedNoteState) {
+                print('asdasdee3333');
                 final data = state.notes;
-                print('loaded');
+
                 return StaggeredGridView.countBuilder(
-                    staggeredTileBuilder: (index) => StaggeredTile.fit(1),
+                    staggeredTileBuilder: (index) => StaggeredTile.fit(
+                        SharedPrefController().getData(key: 'layout') == 1
+                            ? 1
+                            : 3),
                     padding: EdgeInsets.zero,
                     crossAxisCount: 2,
                     shrinkWrap: true,
@@ -111,11 +119,12 @@ class pageOne extends StatelessWidget {
                                 return Icon(Icons.star, color: Colors.yellow);
                               },
                               child: CardNote(
-                                  color: Color(int.parse(
-                                      data[index].backgroundColor)),
-                                  title: data[index].title,
-                                  Body: data[index].note,
-                                  date: '${data[index].date}'),
+                                color: Color(
+                                    int.parse(data[index].backgroundColor)),
+                                title: data[index].title,
+                                Body: data[index].note,
+                                // date: '${data[index].date}'
+                              ),
                             ),
                           ),
                         ));

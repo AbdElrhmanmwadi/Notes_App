@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:note/src/utils/dimensions.dart';
 import 'package:note/src/utils/styles.dart';
 
 class CardNote extends StatelessWidget {
-  final title, Body, date, color;
+  final title,
+      Body,
+      //  date,
+      color;
   const CardNote({
     super.key,
     required this.title,
     required this.Body,
-    required this.date,
+    // required this.date,
     this.color,
   });
 
@@ -45,7 +49,7 @@ class CardNote extends StatelessWidget {
               height: 15,
             ),
             Text(
-              date,
+              '${DateFormat('MMM d  h:mm a').format(DateTime.now())}',
               maxLines: 1,
             ),
           ],

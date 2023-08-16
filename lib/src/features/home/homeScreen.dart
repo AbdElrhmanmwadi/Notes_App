@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, file_names, avoid_print, must_be_immutable, prefer_typing_uninitialized_variables, non_constant_identifier_names
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, file_names, avoid_print, must_be_immutable, prefer_typing_uninitialized_variables, non_constant_identifier_names, sort_child_properties_last
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:intl/intl.dart';
 import 'package:note/generated/l10n.dart';
+import 'package:note/src/common/SharedPref/sharedPref.dart';
+import 'package:note/src/features/Note/presentation/cubit/fontsize_cubit.dart';
 import 'package:note/src/features/Note/presentation/cubit/isupdate_cubit.dart';
 import 'package:note/src/features/Task/presentation/bloc/task_bloc.dart';
 
@@ -13,12 +15,16 @@ import 'package:note/src/features/Task/presentation/widget/bottomShettTask.dart'
 
 import 'package:note/src/features/Note/presentation/view/page/pageone.dart';
 import 'package:note/src/features/Task/presentation/page/pagetwo.dart';
+import 'package:note/src/features/home/widget/settings.dart';
+import 'package:note/src/utils/dimensions.dart';
+import 'package:note/src/utils/styles.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../Note/presentation/bloc/crud_bloc.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({Key? key, required this.initIndex}) : super(key: key);
   final initIndex;
-  
 
   TextEditingController taskController = TextEditingController();
 
@@ -27,10 +33,15 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     IsupdateCubit cubitisUpdate = BlocProvider.of<IsupdateCubit>(context);
+
+    print('//////////////////////');
+    print(Theme.of(context).scaffoldBackgroundColor);
     return DefaultTabController(
       initialIndex: initIndex,
       length: 2,
       child: Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        resizeToAvoidBottomInset: false,
         floatingActionButton: FloatingActionButton(
           elevation: 0,
           backgroundColor: Colors.amberAccent,
@@ -40,12 +51,19 @@ class HomeScreen extends StatelessWidget {
               // sqlDb.deleteMyDatabase();
             } else {
               showModalBottomSheet(
+                isScrollControlled: true,
                 context: context,
                 barrierColor: Colors.transparent,
                 builder: (BuildContext context) {
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: bottomShettTask(
+                  return SingleChildScrollView(
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        left: 10, right: 10,
+                        bottom: MediaQuery.of(context)
+                            .viewInsets
+                            .bottom, // Adjust for keyboard
+                      ),
+                      child: bottomShettTask(
                         hint: '${S.of(context).task_hint}',
                         taskController: taskController,
                         onPressed: () async {
@@ -59,7 +77,9 @@ class HomeScreen extends StatelessWidget {
                             'isComplete': 1,
                           }));
                           Navigator.pop(context);
-                        }),
+                        },
+                      ),
+                    ),
                   );
                 },
               );
@@ -72,6 +92,7 @@ class HomeScreen extends StatelessWidget {
         ),
         endDrawer: Drawer(
           width: double.infinity,
+          child: settings(),
         ),
         appBar: AppBar(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,

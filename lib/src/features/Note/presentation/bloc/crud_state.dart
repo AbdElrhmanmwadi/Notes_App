@@ -30,6 +30,7 @@ class SuccCrud extends CrudState {
 }
 
 class LoadingNoteState extends CrudState {}
+
 class EmptyNoteState extends CrudState {}
 
 class LoadedNoteState extends CrudState {

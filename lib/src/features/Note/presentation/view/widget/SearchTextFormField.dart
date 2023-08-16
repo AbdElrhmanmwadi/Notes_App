@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 class SearchTextFormField extends StatelessWidget {
   final icon, hintText;
   const SearchTextFormField({
-    super.key,required this.icon,required this.hintText,
+    super.key,
+    required this.icon,
+    required this.hintText,
   });
 
   @override
@@ -18,14 +20,13 @@ class SearchTextFormField extends StatelessWidget {
           color: Colors.black.withOpacity(.5)),
       focusColor: Colors.red,
       prefixIcon: Icon(
-       icon, 
+        icon,
         size: 20,
       ),
       fillColor: Colors.grey.withOpacity(.1),
       filled: true,
       border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30),
-          borderSide: BorderSide.none),
+          borderRadius: BorderRadius.circular(30), borderSide: BorderSide.none),
     ));
   }
 }

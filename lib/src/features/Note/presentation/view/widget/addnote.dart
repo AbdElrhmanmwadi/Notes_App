@@ -50,7 +50,7 @@ class Addnote extends StatelessWidget {
                         color: Colors.white,
                       )),
                       content: Text(
-                        "Are your sure you want discard your changes ?",
+                        "${S.of(context).Areyour}",
                         style: TextStyle(
                             color: Colors.white, fontWeight: FontWeight.normal),
                       ),
@@ -63,7 +63,9 @@ class Addnote extends StatelessWidget {
                           onPressed: () {
                             Navigator.pop(context);
                           },
-                          child: Text("Keep"),
+                          child: Text(
+                            "${S.of(context).Keep}",
+                          ),
                         ),
                         MaterialButton(
                           textColor: Colors.white,
@@ -76,7 +78,9 @@ class Addnote extends StatelessWidget {
                             Navigator.of(context).pushNamed('HomeScreen');
                             cubitisUpdate.canPop(false);
                           },
-                          child: Text("Discard"),
+                          child: Text(
+                            "${S.of(context).Discard}",
+                          ),
                         ),
                       ],
                     ),
@@ -106,10 +110,11 @@ class Addnote extends StatelessWidget {
                           .add(AddNoteEvent('notes', {
                         'note': "${bodyController.text}",
                         'title': "${titleController.text}",
-                        'date':
-                            "${DateFormat.MMMEd('en').format(DateTime.now().toLocal())}",
+                        // 'date':
+                        //     "${DateFormat.MMMEd('en').format(DateTime.now())}",
                         "backgroundColor": "${state.color.value}"
                       }));
+
                       print("${bodyController.text}");
                       print("${titleController.text}");
 

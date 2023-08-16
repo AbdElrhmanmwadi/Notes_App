@@ -37,10 +37,11 @@ class NoteLocalDataSourceImpl implements NoteLocalDataSource {
 
   _onUpgrade(Database db, int oldversion, int newversion) async {
     // await db.execute("ALTER TABLE notes ADD COLUMN  title text ");
-   // await db.execute("ALTER TABLE tasks ADD COLUMN  backgroundColor TEXT  ");
+    // await db.execute("ALTER TABLE tasks ADD COLUMN  backgroundColor TEXT  ");
     print("onUpgrade =====================================");
   }
 
+  //"date" Datatime,
   _onCreate(Database db, int version) async {
     Batch batch = db.batch();
     batch.execute('''
@@ -48,9 +49,9 @@ class NoteLocalDataSourceImpl implements NoteLocalDataSource {
     "id" INTEGER  NOT NULL PRIMARY KEY  AUTOINCREMENT, 
     "note" TEXT NOT NULL,
     "title" TEXT NOT NULL,
-    "date" Datatime,
-    "isComplete" INTEGER,
-    "backgroundColor" TEXT
+    "backgroundColor" TEXT,
+    "isComplete" INTEGER
+    
   )
  ''');
     batch.execute('''
