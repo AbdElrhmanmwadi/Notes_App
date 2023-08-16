@@ -242,7 +242,7 @@ class _taskwidgetState extends State<taskwidget> {
                     children: [
                       Text(
                         '${widget.snapshot[index].task}',
-                        style: isComplet == 0
+                        style: widget.snapshot[index].isComplete == 0
                             ? TextStyle(decoration: TextDecoration.lineThrough)
                             : TextStyle(),
                       ),
