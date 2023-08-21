@@ -40,11 +40,15 @@ class _pageTwoState extends State<pageTwo> {
   Widget build(BuildContext context) {
     var controllerCubit = BlocProvider.of<ControllerCubit>(context);
     return SingleChildScrollView(
+        physics: BouncingScrollPhysics(),
         child: Container(
             color: Theme.of(context).scaffoldBackgroundColor,
             padding: EdgeInsets.symmetric(horizontal: 15),
             child: Column(children: [
               BlocBuilder<TaskBloc, TaskState>(
+                buildWhen: (previous, state) {
+                  return previous != state;
+                },
                 builder: (context, state) {
                   if (state is LoadedTaskState) {
                     completedList = state.tasks

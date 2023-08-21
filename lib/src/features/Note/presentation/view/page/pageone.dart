@@ -47,14 +47,13 @@ class pageOne extends StatelessWidget {
           Expanded(
             child: BlocBuilder<CrudBloc, CrudState>(builder: (context, state) {
               if (state is LoadedNoteState) {
-                print('asdasdee3333');
                 final data = state.notes;
-
                 return StaggeredGridView.countBuilder(
+                    physics: BouncingScrollPhysics(),
                     staggeredTileBuilder: (index) => StaggeredTile.fit(
                         SharedPrefController().getData(key: 'layout') == 1
-                            ? 1
-                            : 3),
+                            ? 3
+                            : 1),
                     padding: EdgeInsets.zero,
                     crossAxisCount: 2,
                     shrinkWrap: true,
