@@ -52,8 +52,8 @@ class pageOne extends StatelessWidget {
                     physics: BouncingScrollPhysics(),
                     staggeredTileBuilder: (index) => StaggeredTile.fit(
                         SharedPrefController().getData(key: 'layout') == 1
-                            ? 3
-                            : 1),
+                            ? 1
+                            : 3),
                     padding: EdgeInsets.zero,
                     crossAxisCount: 2,
                     shrinkWrap: true,
