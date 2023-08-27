@@ -1,7 +1,8 @@
-// ignore_for_file: prefer_typing_uninitialized_variables, prefer_const_constructors
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:intl/intl.dart';
 import 'package:note/generated/l10n.dart';
 import 'package:note/src/features/Note/presentation/cubit/isupdate_cubit.dart';
 import 'package:note/src/features/Task/domain/entites/Alarm.dart';
@@ -34,7 +35,91 @@ class _bottomShettTaskState extends State<bottomShettTask> {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
+  DateTime dateTime = DateTime.now();
+  static int id = 0;
+
   List<Alarm> alarms = [];
+
+  void _showDialog(Widget child) {
+    final DateTime today = DateTime.now();
+    final DateTime threeDaysLater = today.add(Duration(days: 3));
+
+    showCupertinoModalPopup<void>(
+      context: context,
+      builder: (BuildContext context) => Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Container(
+          padding: EdgeInsets.all(Dimensions.paddingSizeDefault),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          height: 280,
+          width: MediaQuery.of(context).size.width,
+          margin: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: Column(
+            children: [
+              Material(
+                  color: Colors.transparent,
+                  child: Text('Set reminder',
+                      style: robotoBlack.copyWith(fontSize: 17))),
+              SizedBox(
+                height: 5,
+              ),
+              Material(
+                  color: Colors.transparent,
+                  child: Text(
+                      '${DateFormat('dd MMM hh:mm a').format(DateTime.now())}')),
+              SizedBox(
+                height: 5,
+              ),
+              Expanded(child: child),
+              ButtonBar(
+                alignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey,
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(Dimensions.radiusExtraLarge),
+                      ),
+                      minimumSize:
+                          Size(150, 40), // Adjust the minimum width as needed
+                    ),
+                    child: Text(S.of(context).Cancel),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      if (dateTime != null) {
+                        scheduleAlarmNotification(id++, dateTime.toLocal());
+                        print(id);
+                      }
+                      Navigator.pop(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(Dimensions.radiusExtraLarge),
+                      ),
+                      minimumSize:
+                          Size(150, 40), // Adjust the minimum width as needed
+                    ),
+                    child: Text(S.of(context).ok),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +131,7 @@ class _bottomShettTaskState extends State<bottomShettTask> {
       ),
       elevation: 1,
       child: Container(
-        padding: EdgeInsets.all(20),
+        padding: EdgeInsets.all(Dimensions.paddingSizeLarge),
         decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(Dimensions.radiusLarge)),
@@ -80,35 +165,35 @@ class _bottomShettTaskState extends State<bottomShettTask> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                  Dimensions.radiusDefault)),
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                          backgroundColor: Colors.grey.withOpacity(.2),
-                          foregroundColor: Colors.black),
-                      onPressed: () {
-                        showTimePicker(
-                          context: context,
-                          initialTime: TimeOfDay.now(),
-                        ).then((selectedTime) {
-                          if (selectedTime != null) {
-                            setState(() {
-                              print(selectedTime);
-                              alarms.add(Alarm(time: selectedTime));
-                            });
-                            scheduleAlarmNotification(
-                                alarms.length - 1, selectedTime);
-                          }
-                        });
-                      },
-                      icon: Icon(Icons.lock_clock),
-                      label: Text(
-                        '${S.of(context).SetReminder}',
-                        style: robotoMedium,
-                      )),
+                    style: ElevatedButton.styleFrom(
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(Dimensions.radiusDefault),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 0),
+                      backgroundColor: Colors.grey.withOpacity(.2),
+                      foregroundColor: Colors.black,
+                    ),
+                    onPressed: () {
+                      _showDialog(
+                        CupertinoDatePicker(
+                          dateOrder: DatePickerDateOrder.dmy,
+                          initialDateTime: dateTime,
+                          use24hFormat: false,
+                          onDateTimeChanged: (DateTime newDateTime) {
+                            setState(() => dateTime = newDateTime);
+                          },
+                        ),
+                      );
+                    },
+                    icon: Icon(Icons.lock_clock),
+                    label: Text(
+                      '${S.of(context).SetReminder}',
+                      style: robotoMedium,
+                    ),
+                  ),
                   OutlinedButton(
                       onPressed: cubitdesbleButton.desbleButto
                           ? widget.onPressed
@@ -134,16 +219,12 @@ class _bottomShettTaskState extends State<bottomShettTask> {
     );
   }
 
-  Future<void> scheduleAlarmNotification(int alarmId, TimeOfDay time) async {
-    final now = DateTime.now();
-    final alarmDateTime =
-        DateTime(now.year, now.month, now.day, time.hour, time.minute);
-
+  Future<void> scheduleAlarmNotification(int alarmId, DateTime time) async {
     await flutterLocalNotificationsPlugin.zonedSchedule(
       alarmId,
       '${widget.taskController.text} ',
       'Task time finished!',
-      tz.TZDateTime.from(alarmDateTime, tz.local),
+      tz.TZDateTime.from(time, tz.local),
       const NotificationDetails(
         android: AndroidNotificationDetails(
           'alarm_channel',

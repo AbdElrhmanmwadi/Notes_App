@@ -29,6 +29,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("حسب تاريخ الانشاء"),
         "Bymodificationdate":
             MessageLookupByLibrary.simpleMessage("حسب تاريخ التعديل"),
+        "Cancel": MessageLookupByLibrary.simpleMessage("الغاء"),
         "Characters": MessageLookupByLibrary.simpleMessage("حرف"),
         "Completed": MessageLookupByLibrary.simpleMessage("اكتمل"),
         "DeletenotesinApp":
@@ -51,6 +52,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "gridview": MessageLookupByLibrary.simpleMessage("عرض شبكة"),
         "hintAddNote": MessageLookupByLibrary.simpleMessage("العنوان"),
         "layout": MessageLookupByLibrary.simpleMessage("التنسيق"),
+        "ok": MessageLookupByLibrary.simpleMessage("تم"),
         "search": MessageLookupByLibrary.simpleMessage("البحث عن ملاحظات"),
         "small": MessageLookupByLibrary.simpleMessage("صغير"),
         "task_hint":

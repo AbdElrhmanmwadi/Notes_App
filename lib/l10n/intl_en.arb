@@ -26,7 +26,10 @@
     "STYLE":"STYLE",
     "Areyour":"Are your sure you want discard your changes ?",
     "Keep":"Keep",
-    "Discard":"Discard"
+    "Discard":"Discard",
+    "Cancel":"Cancel",
+    "ok":"Ok"
+
     
     
     

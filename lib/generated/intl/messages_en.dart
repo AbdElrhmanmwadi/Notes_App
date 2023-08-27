@@ -29,6 +29,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("By Creation date"),
         "Bymodificationdate":
             MessageLookupByLibrary.simpleMessage("By modification date"),
+        "Cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
         "Characters": MessageLookupByLibrary.simpleMessage("Characters"),
         "Completed": MessageLookupByLibrary.simpleMessage("Completed"),
         "DeletenotesinApp":
@@ -51,6 +52,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "gridview": MessageLookupByLibrary.simpleMessage("Grid view"),
         "hintAddNote": MessageLookupByLibrary.simpleMessage("Title"),
         "layout": MessageLookupByLibrary.simpleMessage("layout"),
+        "ok": MessageLookupByLibrary.simpleMessage("Ok"),
         "search": MessageLookupByLibrary.simpleMessage("Search notes"),
         "small": MessageLookupByLibrary.simpleMessage("small"),
         "task_hint":
