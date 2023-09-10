@@ -6,8 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:intl/intl.dart';
 import 'package:note/generated/l10n.dart';
-import 'package:note/src/common/SharedPref/sharedPref.dart';
-import 'package:note/src/features/Note/presentation/cubit/fontsize_cubit.dart';
+
 import 'package:note/src/features/Note/presentation/cubit/isupdate_cubit.dart';
 import 'package:note/src/features/Task/presentation/bloc/task_bloc.dart';
 
@@ -16,11 +15,8 @@ import 'package:note/src/features/Task/presentation/widget/bottomShettTask.dart'
 import 'package:note/src/features/Note/presentation/view/page/pageone.dart';
 import 'package:note/src/features/Task/presentation/page/pagetwo.dart';
 import 'package:note/src/features/home/widget/settings.dart';
-import 'package:note/src/utils/dimensions.dart';
-import 'package:note/src/utils/styles.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-import '../Note/presentation/bloc/crud_bloc.dart';
+
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({Key? key, required this.initIndex}) : super(key: key);

@@ -26,7 +26,6 @@ class bottomShettTask extends StatefulWidget {
   });
 
   final TextEditingController taskController;
-
   @override
   State<bottomShettTask> createState() => _bottomShettTaskState();
 }
@@ -41,15 +40,15 @@ class _bottomShettTaskState extends State<bottomShettTask> {
   List<Alarm> alarms = [];
 
   void _showDialog(Widget child) {
-    final DateTime today = DateTime.now();
-    final DateTime threeDaysLater = today.add(Duration(days: 3));
+    // final DateTime today = DateTime.now();
+    //  final DateTime threeDaysLater = today.add(Duration(days: 3));
 
     showCupertinoModalPopup<void>(
       context: context,
       builder: (BuildContext context) => Padding(
         padding: const EdgeInsets.all(10.0),
         child: Container(
-          padding: EdgeInsets.all(Dimensions.paddingSizeDefault),
+          padding: const EdgeInsets.all(Dimensions.paddingSizeDefault),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(10),
@@ -107,8 +106,8 @@ class _bottomShettTaskState extends State<bottomShettTask> {
                         borderRadius:
                             BorderRadius.circular(Dimensions.radiusExtraLarge),
                       ),
-                      minimumSize:
-                          Size(150, 40), // Adjust the minimum width as needed
+                      minimumSize: const Size(
+                          150, 40), // Adjust the minimum width as needed
                     ),
                     child: Text(S.of(context).ok),
                   ),
@@ -147,13 +146,14 @@ class _bottomShettTaskState extends State<bottomShettTask> {
                       ? cubitdesbleButton.desbleButton(false)
                       : cubitdesbleButton.desbleButton(true);
                 },
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.black,
                   fontSize: 25,
                 ),
                 maxLines: 5,
                 decoration: InputDecoration(
-                  prefixIconConstraints: BoxConstraints.tight(Size(10, 10)),
+                  prefixIconConstraints:
+                      BoxConstraints.tight(const Size(10, 10)),
                   hintText: widget.hint,
                   hintStyle: robotoRegular.copyWith(
                       fontSize: Dimensions.fontSizeLarge,
@@ -183,12 +183,14 @@ class _bottomShettTaskState extends State<bottomShettTask> {
                           initialDateTime: dateTime,
                           use24hFormat: false,
                           onDateTimeChanged: (DateTime newDateTime) {
-                            setState(() => dateTime = newDateTime);
+                            setState(() {
+                              dateTime = newDateTime;
+                            });
                           },
                         ),
                       );
                     },
-                    icon: Icon(Icons.lock_clock),
+                    icon: const Icon(Icons.lock_clock),
                     label: Text(
                       '${S.of(context).SetReminder}',
                       style: robotoMedium,
@@ -201,14 +203,19 @@ class _bottomShettTaskState extends State<bottomShettTask> {
                       style: OutlinedButton.styleFrom(
                           disabledForegroundColor: Colors.grey,
                           side: BorderSide.none,
-                          shape: RoundedRectangleBorder(side: BorderSide.none)),
-                      child: Text(
-                        '${S.of(context).Done}',
-                        style: robotoMedium.copyWith(
-                            color: cubitdesbleButton.desbleButto
-                                ? Colors.amber
-                                : Colors.grey,
-                            fontSize: Dimensions.fontSizeLarge),
+                          shape: const RoundedRectangleBorder(
+                              side: BorderSide.none)),
+                      child: BlocBuilder<IsupdateCubit, IsupdateState>(
+                        builder: (context, state) {
+                          return Text(
+                            '${S.of(context).Done}',
+                            style: robotoMedium.copyWith(
+                                color: cubitdesbleButton.desbleButto
+                                    ? Colors.amber
+                                    : Colors.grey,
+                                fontSize: Dimensions.fontSizeLarge),
+                          );
+                        },
                       ))
                 ],
               )
@@ -233,7 +240,6 @@ class _bottomShettTaskState extends State<bottomShettTask> {
           priority: Priority.high,
         ),
       ),
-      androidAllowWhileIdle: true,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
     );

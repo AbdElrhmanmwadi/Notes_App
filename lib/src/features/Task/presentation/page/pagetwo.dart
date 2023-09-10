@@ -119,7 +119,6 @@ class taskwidget extends StatefulWidget {
 
   @override
   State<taskwidget> createState() => _taskwidgetState();
-  
 }
 
 class _taskwidgetState extends State<taskwidget> {
@@ -251,6 +250,7 @@ class _taskwidgetState extends State<taskwidget> {
                             ? TextStyle(decoration: TextDecoration.lineThrough)
                             : TextStyle(),
                       ),
+                      Text('')
                     ],
                   ),
                 ),
