@@ -64,6 +64,7 @@ class pageOne extends StatelessWidget {
                             onTap: () {
                               Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => viewEditNote(
+                                  background:data[index].backgroundColor,
                                   title: data[index].title,
                                   body: data[index].note,
                                   id: data[index].id,

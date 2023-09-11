@@ -23,12 +23,14 @@ import 'package:note/src/utils/styles.dart';
 class viewEditNote extends StatelessWidget {
   final String title, body;
   final id;
+  final background;
 
   viewEditNote({
     Key? key,
     required this.title,
     required this.body,
     required this.id,
+    this.background,
   }) : super(key: key);
 
   TextEditingController titleController = TextEditingController();
@@ -44,21 +46,25 @@ class viewEditNote extends StatelessWidget {
     titleController.text = title;
     bodyController.text = body;
 
-    Color backgroundColors = Colors.white;
+    Color backgroundColors;
+    bool backroundColor = true;
 
     return Hero(
       tag: '$id',
       child: BlocBuilder<BackgroundColorCubit, BackgroundColorState>(
         builder: (context, state) {
           if (state is BackgroundColorInitial) {
-            Color textColor = getForegroundColor(state.color);
+            Color textColor = getForegroundColor(
+                backroundColor ? Color(int.parse(background)) : state.color);
 
             print(state.color.value);
             return Scaffold(
-              backgroundColor: state.color,
+              backgroundColor:
+                  backroundColor ? Color(int.parse(background)) : state.color,
               appBar: AppBar(
                 elevation: 0,
-                backgroundColor: state.color,
+                backgroundColor:
+                    backroundColor ? Color(int.parse(background)) : state.color,
                 leading: BackButton(
                   color: textColor,
                   onPressed: () async {
@@ -69,7 +75,9 @@ class viewEditNote extends StatelessWidget {
                         'note': "${bodyController.text}",
                         'title': "${titleController.text}",
                         // 'date': "${DateFormat.MMMEd().format(DateTime.now())}",
-                        "backgroundColor": "${state.color.value}"
+                        "backgroundColor": backroundColor
+                            ? "$background"
+                            : "${state.color.value}"
                       },
                     ));
 
@@ -80,6 +88,7 @@ class viewEditNote extends StatelessWidget {
                   IconButton(
                       onPressed: () {
                         bottomSheetColor(context, cubitbackground);
+                        backroundColor = false;
                       },
                       icon: Icon(
                         Icons.color_lens_rounded,
@@ -100,7 +109,7 @@ class viewEditNote extends StatelessWidget {
                                 ))
                             : Container();
                       }
-                      return Text('error');
+                      return Text('');
                     },
                   )
                 ],
@@ -114,6 +123,7 @@ class viewEditNote extends StatelessWidget {
                         child: Column(
                           children: [
                             TextFormField(
+                              enabled: false,
                               controller: titleController,
                               onTap: () => cubitisUpdate.isUpdate(true),
                               onTapOutside: (event) =>
