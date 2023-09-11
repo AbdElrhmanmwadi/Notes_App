@@ -16,8 +16,6 @@ import 'package:note/src/features/Note/presentation/view/page/pageone.dart';
 import 'package:note/src/features/Task/presentation/page/pagetwo.dart';
 import 'package:note/src/features/home/widget/settings.dart';
 
-
-
 class HomeScreen extends StatelessWidget {
   HomeScreen({Key? key, required this.initIndex}) : super(key: key);
   final initIndex;
@@ -88,7 +86,7 @@ class HomeScreen extends StatelessWidget {
         ),
         endDrawer: Drawer(
           width: double.infinity,
-          child: settings(),
+          child: Settings(),
         ),
         appBar: AppBar(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,

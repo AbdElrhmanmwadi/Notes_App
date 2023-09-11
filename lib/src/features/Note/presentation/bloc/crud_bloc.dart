@@ -39,7 +39,6 @@ class CrudBloc extends Bloc<CrudEvent, CrudState> {
           } catch (e) {
             print(" eeeeeeeeeeeeeeeeeee $e");
             emit(EmptyNoteState());
-            // Handle the error gracefully...
           }
         } else {
           emit(ErrorCrud(message: 'Error'));

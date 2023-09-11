@@ -7,7 +7,6 @@ abstract class FontsizeState extends Equatable {
   List<Object> get props => [];
 }
 
-class FontsizeInitial extends FontsizeState {}
 
 class changeFontSizeState extends FontsizeState {
   double fontSize;

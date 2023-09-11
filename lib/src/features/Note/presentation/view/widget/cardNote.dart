@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:note/src/common/fuction/function..dart';
 import 'package:note/src/utils/dimensions.dart';
 import 'package:note/src/utils/styles.dart';
 
@@ -18,6 +19,7 @@ class CardNote extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color ForegroundColor = getForegroundColor(color);
     return Card(
       borderOnForeground: false,
       color: color,
@@ -25,7 +27,7 @@ class CardNote extends StatelessWidget {
       shape: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
       child: Container(
-        padding: EdgeInsets.all(15),
+        padding: const EdgeInsets.all(15),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
           color: Colors.white.withOpacity(.1),
@@ -34,22 +36,26 @@ class CardNote extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(title,
-                style:
-                    robotoRegular.copyWith(fontSize: Dimensions.fontSizeLarge)),
-            SizedBox(
+                style: robotoRegular.copyWith(
+                    fontSize: Dimensions.fontSizeLarge,
+                    color: ForegroundColor)),
+            const SizedBox(
               height: 15,
             ),
             Text(
               Body,
-              style: robotoRegular.copyWith(fontWeight: FontWeight.w200),
+              style: robotoRegular.copyWith(
+                  fontWeight: FontWeight.w200, color: ForegroundColor),
               maxLines: 5,
               overflow: TextOverflow.ellipsis,
             ),
-            SizedBox(
+            const SizedBox(
               height: 15,
             ),
             Text(
               '${DateFormat('MMM d  h:mm a').format(DateTime.now())}',
+              style: robotoRegular.copyWith(
+                  fontWeight: FontWeight.w100, color: ForegroundColor),
               maxLines: 1,
             ),
           ],

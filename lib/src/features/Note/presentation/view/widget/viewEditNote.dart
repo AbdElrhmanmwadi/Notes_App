@@ -136,8 +136,7 @@ class viewEditNote extends StatelessWidget {
                               decoration: InputDecoration(
                                 hintText: '${S.of(context).hintAddNote}',
                                 hintStyle: robotoRegular.copyWith(
-                                    fontSize: state.fontSize,
-                                    color: Colors.black45),
+                                    fontSize: state.fontSize, color: textColor),
                                 border: InputBorder.none,
                               ),
                             ),
@@ -172,7 +171,7 @@ class viewEditNote extends StatelessWidget {
                                       '  |  ',
                                       style: robotoRegular.copyWith(
                                           fontSize: Dimensions.fontSizeLarge,
-                                          color: Colors.black26),
+                                          color: textColor),
                                     ),
                                     Text(
                                       '$currentLength ${S.of(context).Characters}',
@@ -186,8 +185,7 @@ class viewEditNote extends StatelessWidget {
                               decoration: InputDecoration(
                                 hintText: '${S.of(context).Starttyping}',
                                 hintStyle: robotoRegular.copyWith(
-                                    fontSize: state.fontSize,
-                                    color: Colors.black45),
+                                    fontSize: state.fontSize, color: textColor),
                                 border: InputBorder.none,
                               ),
                             ),

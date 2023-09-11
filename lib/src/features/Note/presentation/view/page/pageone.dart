@@ -52,8 +52,8 @@ class pageOne extends StatelessWidget {
                     physics: BouncingScrollPhysics(),
                     staggeredTileBuilder: (index) => StaggeredTile.fit(
                         SharedPrefController().getData(key: 'layout') == 1
-                            ? 3
-                            : 1),
+                            ? 1
+                            : 3),
                     padding: EdgeInsets.zero,
                     crossAxisCount: 2,
                     shrinkWrap: true,
@@ -64,7 +64,7 @@ class pageOne extends StatelessWidget {
                             onTap: () {
                               Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => viewEditNote(
-                                  background:data[index].backgroundColor,
+                                  background: data[index].backgroundColor,
                                   title: data[index].title,
                                   body: data[index].note,
                                   id: data[index].id,

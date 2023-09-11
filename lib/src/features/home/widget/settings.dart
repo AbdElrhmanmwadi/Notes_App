@@ -10,8 +10,8 @@ import 'package:note/src/utils/styles.dart';
 
 import '../../../../generated/l10n.dart';
 
-class settings extends StatelessWidget {
-  const settings({
+class Settings extends StatelessWidget {
+  const Settings({
     super.key,
   });
 
@@ -19,6 +19,7 @@ class settings extends StatelessWidget {
   Widget build(BuildContext context) {
     FontsizeCubit cubitChangeFontSize = BlocProvider.of<FontsizeCubit>(context);
     return CustomScrollView(
+      physics: BouncingScrollPhysics(),
       slivers: [
         SliverAppBar(
           elevation: 0,
@@ -28,7 +29,7 @@ class settings extends StatelessWidget {
             onPressed: () {
               Navigator.of(context).pop();
             },
-            icon: Icon(
+            icon: const Icon(
               Icons.arrow_back,
               color: Colors.black,
             ),
@@ -39,10 +40,10 @@ class settings extends StatelessWidget {
           flexibleSpace: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
               return FlexibleSpaceBar(
-                titlePadding: EdgeInsets.symmetric(horizontal: 16),
+                titlePadding: const EdgeInsets.symmetric(horizontal: 16),
                 centerTitle: constraints.biggest.height < 100,
                 title: AnimatedSwitcher(
-                  duration: Duration(milliseconds: 100),
+                  duration: const Duration(milliseconds: 100),
                   child: Text('${S.of(context).Notes}',
                       style: robotoBlack.copyWith(
                           fontSize: Dimensions.fontSizeOverLarge,
@@ -57,7 +58,7 @@ class settings extends StatelessWidget {
           child: Divider(),
         ),
         SliverPadding(
-          padding: EdgeInsets.all(Dimensions.paddingSizeDefault),
+          padding: const EdgeInsets.all(Dimensions.paddingSizeDefault),
           sliver: SliverToBoxAdapter(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -70,14 +71,14 @@ class settings extends StatelessWidget {
                       color: Colors.black.withOpacity(.7)),
                 ),
                 ListTile(
-                  contentPadding: EdgeInsets.all(0),
+                  contentPadding: const EdgeInsets.all(0),
                   title: Text(
                     '${S.of(context).DeletenotesinApp}',
                     style: robotoMedium.copyWith(
                         fontSize: Dimensions.fontSizeExtraLarge),
                   ),
                   trailing: InkWell(
-                    child: Icon(Icons.delete_forever),
+                    child: const Icon(Icons.delete_forever),
                     onTap: () {
                       NoteLocalDataSourceImpl().deleteMyDatabase();
                       SystemNavigator.pop();
@@ -92,7 +93,7 @@ class settings extends StatelessWidget {
           child: Divider(),
         ),
         SliverPadding(
-          padding: EdgeInsets.all(Dimensions.paddingSizeDefault),
+          padding: const EdgeInsets.all(Dimensions.paddingSizeDefault),
           sliver: SliverToBoxAdapter(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,7 +106,7 @@ class settings extends StatelessWidget {
                       color: Colors.black.withOpacity(.7)),
                 ),
                 ListTile(
-                  contentPadding: EdgeInsets.all(0),
+                  contentPadding: const EdgeInsets.all(0),
                   title: Text(
                     '${S.of(context).FontSize}',
                     style: robotoMedium.copyWith(
@@ -115,25 +116,24 @@ class settings extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(5.0),
                     ),
-                    child: Icon(Icons.keyboard_arrow_down),
+                    child: const Icon(Icons.keyboard_arrow_down),
                     onSelected: (value) {
-                      print(value);
                       cubitChangeFontSize.changeFontSize(value);
                       SharedPrefController().setData('fontSize', value);
                     },
                     itemBuilder: (BuildContext bc) {
                       return [
                         PopupMenuItem(
+                          value: Dimensions.fontSizeLarge,
                           child: ListTile(
-                            contentPadding: EdgeInsets.all(0),
+                            contentPadding: const EdgeInsets.all(0),
                             title: Text('${S.of(context).small}'),
                             trailing: SharedPrefController()
                                         .getData(key: 'fontSize') ==
                                     Dimensions.fontSizeLarge
-                                ? Icon(Icons.check)
+                                ? const Icon(Icons.check)
                                 : null,
                           ),
-                          value: Dimensions.fontSizeLarge,
                         ),
                         PopupMenuItem(
                           value: Dimensions.fontSizeExtraLarge,
@@ -148,35 +148,35 @@ class settings extends StatelessWidget {
                           ),
                         ),
                         PopupMenuItem(
+                          value: Dimensions.fontSizeOverLarge,
                           child: ListTile(
                             contentPadding: EdgeInsets.all(0),
                             title: Text('${S.of(context).Large}'),
                             trailing: SharedPrefController()
                                         .getData(key: 'fontSize') ==
                                     Dimensions.fontSizeOverLarge
-                                ? Icon(Icons.check)
+                                ? const Icon(Icons.check)
                                 : null,
                           ),
-                          value: Dimensions.fontSizeOverLarge,
                         ),
                         PopupMenuItem(
+                          value: Dimensions.fontSizeVeryOverLarge,
                           child: ListTile(
-                            contentPadding: EdgeInsets.all(0),
+                            contentPadding: const EdgeInsets.all(0),
                             title: Text('${S.of(context).Huge}'),
                             trailing: SharedPrefController()
                                         .getData(key: 'fontSize') ==
                                     Dimensions.fontSizeVeryOverLarge
-                                ? Icon(Icons.check)
+                                ? const Icon(Icons.check)
                                 : null,
                           ),
-                          value: Dimensions.fontSizeVeryOverLarge,
                         ),
                       ];
                     },
                   ),
                 ),
                 ListTile(
-                  contentPadding: EdgeInsets.all(0),
+                  contentPadding: const EdgeInsets.all(0),
                   title: Text(
                     '${S.of(context).Sort}',
                     style: robotoMedium.copyWith(
@@ -184,8 +184,7 @@ class settings extends StatelessWidget {
                   ),
                   trailing: PopupMenuButton(
                     shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(10.0), // Set the border radius
+                      borderRadius: BorderRadius.circular(10.0),
                     ),
                     child: Icon(Icons.keyboard_arrow_down),
                     onSelected: (value) {
@@ -194,23 +193,23 @@ class settings extends StatelessWidget {
                     itemBuilder: (BuildContext bc) {
                       return [
                         PopupMenuItem(
+                          value: '1',
                           child: Text(
                             '${S.of(context).ByCreationdate}',
                           ),
-                          value: '1',
                         ),
                         PopupMenuItem(
+                          value: '2',
                           child: Text(
                             '${S.of(context).Bymodificationdate}',
                           ),
-                          value: '2',
                         ),
                       ];
                     },
                   ),
                 ),
                 ListTile(
-                    contentPadding: EdgeInsets.all(0),
+                    contentPadding: const EdgeInsets.all(0),
                     title: Text(
                       '${S.of(context).layout}',
                       style: robotoMedium.copyWith(
@@ -220,7 +219,7 @@ class settings extends StatelessWidget {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(5.0),
                       ),
-                      child: Icon(Icons.keyboard_arrow_down),
+                      child: const Icon(Icons.keyboard_arrow_down),
                       onSelected: (value) {
                         BlocProvider.of<CrudBloc>(context)
                             .add(GetAllNoteEvent());
@@ -236,7 +235,7 @@ class settings extends StatelessWidget {
                               trailing: SharedPrefController()
                                           .getData(key: 'layout') ==
                                       1.0
-                                  ? Icon(Icons.check)
+                                  ? const Icon(Icons.check)
                                   : null,
                             ),
                           ),
@@ -248,7 +247,7 @@ class settings extends StatelessWidget {
                               trailing: SharedPrefController()
                                           .getData(key: 'layout') ==
                                       2.0
-                                  ? Icon(Icons.check)
+                                  ? const Icon(Icons.check)
                                   : null,
                             ),
                           ),

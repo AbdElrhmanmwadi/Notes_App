@@ -127,11 +127,11 @@ class NoteLocalDataSourceImpl implements NoteLocalDataSource {
     return task;
   }
 
-  // read(String table, myWhere) async {
-  //   Database? mydb = await db;
-  //   List<Map> response = await mydb!.query(table, orderBy: 'id DESC');
-  //   return response;
-  // }
+  read(String table, myWhere) async {
+    Database? mydb = await db;
+    List<Map> response = await mydb!.query(table,where: myWhere, orderBy: 'id DESC',);
+    return response;
+  }
 
   // insert(String table, Map<String, Object?> value) async {
   //   Database? mydb = await db;
