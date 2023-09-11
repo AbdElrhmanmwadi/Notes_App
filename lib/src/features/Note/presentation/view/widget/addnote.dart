@@ -30,6 +30,8 @@ class Addnote extends StatelessWidget {
     IsupdateCubit cubitisUpdate = BlocProvider.of<IsupdateCubit>(context);
     BackgroundColorCubit cubitbackground =
         BlocProvider.of<BackgroundColorCubit>(context);
+    bool backroundColor = true;
+    Color background = Colors.white;
 
     return WillPopScope(
       onWillPop: () async {
@@ -91,14 +93,15 @@ class Addnote extends StatelessWidget {
       child: BlocBuilder<BackgroundColorCubit, BackgroundColorState>(
         builder: (context, state) {
           if (state is BackgroundColorInitial) {
-            Color textColor = getForegroundColor(state.color);
+            Color textColor =
+                getForegroundColor(backroundColor ? background : state.color);
 
             print(textColor);
             return Scaffold(
-              backgroundColor: state.color,
+              backgroundColor: backroundColor ? background : state.color,
               appBar: AppBar(
                 elevation: 0,
-                backgroundColor: state.color,
+                backgroundColor: backroundColor ? background : state.color,
                 // backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                 leading: IconButton(
                   icon: Icon(Icons.arrow_back),
@@ -126,8 +129,8 @@ class Addnote extends StatelessWidget {
                 actions: [
                   IconButton(
                       onPressed: () {
-                        Color? color;
                         bottomSheetColor(context, cubitbackground);
+                        backroundColor = false;
                       },
                       icon: Icon(
                         Icons.color_lens_rounded,
