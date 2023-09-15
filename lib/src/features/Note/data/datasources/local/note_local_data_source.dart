@@ -31,9 +31,15 @@ class NoteLocalDataSourceImpl implements NoteLocalDataSource {
     String databasepath = await getDatabasesPath();
     String path = join(databasepath, 'note.db');
     Database mydb = await openDatabase(path,
-        onCreate: _onCreate, version: 4, onUpgrade: _onUpgrade);
+    
+        onCreate: _onCreate, version: 4, onUpgrade: _onUpgrade
+        ,);
     return mydb;
   }
+  //  options: OpenDatabaseOptions(
+  //       // For Arabic text, you can use UTF-8 encoding
+  //       encoding: Encoding.getByName('UTF-8'),
+  //     )
 
   _onUpgrade(Database db, int oldversion, int newversion) async {
     // await db.execute("ALTER TABLE notes ADD COLUMN  title text ");
@@ -50,7 +56,8 @@ class NoteLocalDataSourceImpl implements NoteLocalDataSource {
     "note" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "backgroundColor" TEXT,
-    "isComplete" INTEGER
+    "isComplete" INTEGER,
+    "date" Datatime
     
   )
  ''');

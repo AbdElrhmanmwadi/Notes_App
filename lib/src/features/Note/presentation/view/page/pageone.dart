@@ -119,6 +119,7 @@ class pageOne extends StatelessWidget {
                                 return Icon(Icons.star, color: Colors.yellow);
                               },
                               child: CardNote(
+                                date: data[index].date,
                                 color: Color(
                                     int.parse(data[index].backgroundColor)),
                                 title: data[index].title,

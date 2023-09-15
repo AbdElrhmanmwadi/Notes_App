@@ -5,15 +5,12 @@ import 'package:note/src/utils/dimensions.dart';
 import 'package:note/src/utils/styles.dart';
 
 class CardNote extends StatelessWidget {
-  final title,
-      Body,
-      //  date,
-      color;
+  final title, Body, date, color;
   const CardNote({
     super.key,
     required this.title,
     required this.Body,
-    // required this.date,
+    required this.date,
     this.color,
   });
 
@@ -53,7 +50,7 @@ class CardNote extends StatelessWidget {
               height: 15,
             ),
             Text(
-              '${DateFormat('MMM d  h:mm a').format(DateTime.now())}',
+              '${DateFormat.MMMEd().format(date)}',
               style: robotoRegular.copyWith(
                   fontWeight: FontWeight.w100, color: ForegroundColor),
               maxLines: 1,

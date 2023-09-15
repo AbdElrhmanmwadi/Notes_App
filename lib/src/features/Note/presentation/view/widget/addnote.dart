@@ -114,8 +114,7 @@ class Addnote extends StatelessWidget {
                           .add(AddNoteEvent('notes', {
                         'note': "${bodyController.text}",
                         'title': "${titleController.text}",
-                        // 'date':
-                        //     "${DateFormat.MMMEd('en').format(DateTime.now())}",
+                        'date': "${DateFormat.MMMEd().format(DateTime.now())}",
                         "backgroundColor": backroundColor
                             ? "${background.value}"
                             : "${state.color.value}"
