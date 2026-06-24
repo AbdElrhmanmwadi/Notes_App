@@ -1,30 +1,49 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
+// Unit tests for the model mapping layer. These cover the data conversions
+// that the old code got wrong (notably the inverted task-completion flag and
+// the column<->field naming), without requiring the sqflite plugin.
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:note/src/myApp.dart';
+import 'package:note/src/models/note.dart';
+import 'package:note/src/models/task.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  group('Note', () {
+    test('round-trips through a column map', () {
+      const note = Note(
+          title: 'Groceries',
+          body: 'Milk',
+          updatedAt: '2024-01-01T10:00:00.000');
+      final map = note.toMap();
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+      expect(map['title'], 'Groceries');
+      expect(map['note'], 'Milk'); // body is stored in the `note` column.
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+      final restored = Note.fromMap({...map, 'id': 1});
+      expect(restored.id, 1);
+      expect(restored.title, 'Groceries');
+      expect(restored.body, 'Milk');
+    });
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    test('isEmpty ignores whitespace', () {
+      expect(
+          const Note(title: '  ', body: '\n', updatedAt: '').isEmpty, isTrue);
+      expect(const Note(title: 'x', body: '', updatedAt: '').isEmpty, isFalse);
+    });
+
+    test('displayDate falls back to the raw value for legacy rows', () {
+      expect(
+          const Note(title: '', body: '', updatedAt: 'Mon, Jun 24').displayDate,
+          'Mon, Jun 24');
+    });
+  });
+
+  group('Task', () {
+    test('maps isComplete to/from the 0/1 column correctly', () {
+      expect(Task.fromMap({'task': 'a', 'isComplete': 1}).isComplete, isTrue);
+      expect(Task.fromMap({'task': 'a', 'isComplete': 0}).isComplete, isFalse);
+
+      const done = Task(title: 'a', isComplete: true, updatedAt: '');
+      expect(done.toMap()['isComplete'], 1);
+    });
   });
 }
