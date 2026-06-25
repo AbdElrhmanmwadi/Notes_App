@@ -16,6 +16,7 @@ class AppDatabase {
 
   static const notesTable = 'notes';
   static const tasksTable = 'tasks';
+  static const settingsTable = 'settings';
   static const _notesFts = 'notes_fts';
 
   /// Test hook: when true the database opens in memory, giving each test a
@@ -40,8 +41,32 @@ class AppDatabase {
       version: _dbVersion,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
-      onOpen: (db) async => _ftsEnabled = await _ensureFts(db),
+      onOpen: (db) async {
+        await _ensureSettings(db);
+        _ftsEnabled = await _ensureFts(db);
+      },
     );
+  }
+
+  /// Simple key/value store for app preferences (e.g. theme mode). Created via
+  /// onOpen so it exists on both fresh and upgraded databases without a version
+  /// bump.
+  Future<void> _ensureSettings(Database db) async {
+    await db.execute(
+      'CREATE TABLE IF NOT EXISTS $settingsTable '
+      '(key TEXT PRIMARY KEY, value TEXT)',
+    );
+  }
+
+  Future<String?> getSetting(String key) async {
+    final db = await _database;
+    final rows = await db.query(settingsTable,
+        columns: ['value'], where: 'key = ?', whereArgs: [key], limit: 1);
+    return rows.isEmpty ? null : rows.first['value'] as String?;
+  }
+
+  Future<void> setSetting(String key, String value) async {
+    await insert(settingsTable, {'key': key, 'value': value});
   }
 
   /// Closes and forgets the connection. Used between tests.

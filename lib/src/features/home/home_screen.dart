@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../common/widgets/theme_menu_button.dart';
 import '../../controllers/tasks_controller.dart';
 import '../notes/note_editor_screen.dart';
 import '../notes/widgets/notes_tab.dart';
@@ -70,6 +71,7 @@ class _HomeScreenState extends State<HomeScreen>
             Tab(icon: Icon(Icons.check_box_outlined)),
           ],
         ),
+        actions: const [ThemeMenuButton()],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _onFabPressed,

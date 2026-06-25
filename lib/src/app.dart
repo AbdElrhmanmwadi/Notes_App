@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'controllers/notes_controller.dart';
+import 'controllers/settings_controller.dart';
 import 'controllers/tasks_controller.dart';
 import 'core/theme/app_theme.dart';
 import 'features/home/home_screen.dart';
@@ -11,6 +12,7 @@ import 'features/home/home_screen.dart';
 class AppBinding extends Bindings {
   @override
   void dependencies() {
+    Get.put(SettingsController(), permanent: true);
     Get.put(NotesController(), permanent: true);
     Get.put(TasksController(), permanent: true);
   }
