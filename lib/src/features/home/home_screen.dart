@@ -61,21 +61,26 @@ class _HomeScreenState extends State<HomeScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: TabBar(
+        titleSpacing: 20,
+        title: const Text(
+          'Notes',
+          style: TextStyle(fontWeight: FontWeight.w700),
+        ),
+        actions: const [ThemeMenuButton(), SizedBox(width: 4)],
+        bottom: TabBar(
           controller: _tabController,
-          isScrollable: true,
-          tabAlignment: TabAlignment.center,
-          indicatorSize: TabBarIndicatorSize.label,
+          indicatorSize: TabBarIndicatorSize.tab,
+          dividerColor: Colors.transparent,
           tabs: const [
-            Tab(icon: Icon(Icons.note_alt_outlined)),
-            Tab(icon: Icon(Icons.check_box_outlined)),
+            Tab(icon: Icon(Icons.sticky_note_2_outlined), text: 'Notes'),
+            Tab(icon: Icon(Icons.task_alt_outlined), text: 'Tasks'),
           ],
         ),
-        actions: const [ThemeMenuButton()],
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: _onFabPressed,
-        child: const Icon(Icons.add, size: 32),
+        icon: const Icon(Icons.add),
+        label: Text(_isNotesTab ? 'New note' : 'New task'),
       ),
       body: TabBarView(
         controller: _tabController,

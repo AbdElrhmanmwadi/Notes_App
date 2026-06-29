@@ -7,7 +7,7 @@ class Note {
     required this.title,
     required this.body,
     required this.updatedAt,
-    this.color,
+    this.background,
     this.isPinned = false,
   });
 
@@ -19,8 +19,9 @@ class Note {
   /// legacy rows may contain a pre-formatted string (kept for display only).
   final String updatedAt;
 
-  /// ARGB colour for the card background, or null for the default surface.
-  final int? color;
+  /// Background token: `c:<argb>`, `g:<id>`, `img:<file>`, or null for default.
+  /// See [NoteBackground].
+  final String? background;
 
   final bool isPinned;
 
@@ -29,9 +30,14 @@ class Note {
         title: (map['title'] as String?) ?? '',
         body: (map['note'] as String?) ?? '',
         updatedAt: (map['date'] as String?) ?? '',
-        color: map['color'] as int?,
+        background: (map['background'] as String?) ??
+            _legacyColorToken(map['color'] as int?),
         isPinned: (map['isPinned'] as int? ?? 0) == 1,
       );
+
+  /// Converts a legacy ARGB `color` int into a `c:<argb>` background token.
+  static String? _legacyColorToken(int? color) =>
+      color == null ? null : 'c:${color.toRadixString(16).padLeft(8, '0')}';
 
   /// Column map for persistence. `id` is omitted so SQLite can auto-increment;
   /// pass [withId] = true to preserve the id (used to restore after an undo).
@@ -40,7 +46,8 @@ class Note {
         'title': title,
         'note': body,
         'date': updatedAt,
-        'color': color,
+        'background': background,
+        'color': null, // legacy column no longer used
         'isPinned': isPinned ? 1 : 0,
       };
 
@@ -59,16 +66,16 @@ class Note {
     String? title,
     String? body,
     String? updatedAt,
-    int? color,
+    String? background,
     bool? isPinned,
-    bool clearColor = false,
+    bool clearBackground = false,
   }) =>
       Note(
         id: id ?? this.id,
         title: title ?? this.title,
         body: body ?? this.body,
         updatedAt: updatedAt ?? this.updatedAt,
-        color: clearColor ? null : (color ?? this.color),
+        background: clearBackground ? null : (background ?? this.background),
         isPinned: isPinned ?? this.isPinned,
       );
 }

@@ -81,12 +81,13 @@ class AppDatabase {
     final batch = db.batch();
     batch.execute('''
       CREATE TABLE $notesTable (
-        id       INTEGER PRIMARY KEY AUTOINCREMENT,
-        title    TEXT    NOT NULL DEFAULT '',
-        note     TEXT    NOT NULL DEFAULT '',
-        date     TEXT,
-        color    INTEGER,
-        isPinned INTEGER NOT NULL DEFAULT 0
+        id         INTEGER PRIMARY KEY AUTOINCREMENT,
+        title      TEXT    NOT NULL DEFAULT '',
+        note       TEXT    NOT NULL DEFAULT '',
+        date       TEXT,
+        color      INTEGER,
+        background TEXT,
+        isPinned   INTEGER NOT NULL DEFAULT 0
       )
     ''');
     batch.execute('''
@@ -127,6 +128,8 @@ class AppDatabase {
         db, notesTable, 'date', 'ALTER TABLE $notesTable ADD COLUMN date TEXT');
     await _ensureColumn(db, notesTable, 'color',
         'ALTER TABLE $notesTable ADD COLUMN color INTEGER');
+    await _ensureColumn(db, notesTable, 'background',
+        'ALTER TABLE $notesTable ADD COLUMN background TEXT');
     await _ensureColumn(db, notesTable, 'isPinned',
         'ALTER TABLE $notesTable ADD COLUMN isPinned INTEGER NOT NULL DEFAULT 0');
   }

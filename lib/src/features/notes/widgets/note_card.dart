@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/theme/note_background.dart';
 import '../../../models/note.dart';
 
-/// Single note tile used inside the masonry grid.
+/// Single note tile used inside the masonry grid. Renders any background
+/// (colour / gradient / photo) and picks text colours that stay legible.
 class NoteCard extends StatelessWidget {
   const NoteCard({
     super.key,
@@ -18,52 +20,91 @@ class NoteCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final bg = note.color != null ? Color(note.color!) : null;
-    // Note colours are light pastels; keep text dark on top of them.
-    final onColor = bg != null ? Colors.black87 : theme.colorScheme.onSurface;
+    final scheme = theme.colorScheme;
+    final bg = NoteBackground.fromToken(note.background);
 
-    return Card(
-      color: bg,
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        onLongPress: onLongPress,
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (note.isPinned)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 6),
-                  child: Icon(Icons.push_pin,
-                      size: 16, color: onColor.withValues(alpha: 0.6)),
-                ),
-              if (note.title.trim().isNotEmpty) ...[
-                Text(
-                  note.title,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.titleMedium?.copyWith(color: onColor),
-                ),
-                const SizedBox(height: 8),
-              ],
-              if (note.body.trim().isNotEmpty)
-                Text(
-                  note.body,
-                  maxLines: 6,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.bodyMedium
-                      ?.copyWith(color: onColor.withValues(alpha: 0.75)),
-                ),
-              const SizedBox(height: 12),
-              Text(
-                note.displayDate,
-                style: theme.textTheme.labelSmall
-                    ?.copyWith(color: onColor.withValues(alpha: 0.5)),
-              ),
-            ],
+    final primary = bg.primaryText(scheme, theme.brightness);
+    final secondary = bg.secondaryText(scheme, theme.brightness);
+    final tertiary = bg.tertiaryText(scheme, theme.brightness);
+
+    return DecoratedBox(
+      decoration: bg.decoration(scheme).copyWith(
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(
+                alpha: theme.brightness == Brightness.dark ? 0.32 : 0.08),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Stack(
+          children: [
+            if (bg.needsScrim)
+              Positioned.fill(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.black.withValues(alpha: 0.15),
+                        Colors.black.withValues(alpha: 0.55),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            Material(
+              type: MaterialType.transparency,
+              child: InkWell(
+                onTap: onTap,
+                onLongPress: onLongPress,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (note.isPinned)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child:
+                              Icon(Icons.push_pin, size: 16, color: secondary),
+                        ),
+                      if (note.title.trim().isNotEmpty) ...[
+                        Text(
+                          note.title,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            color: primary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                      ],
+                      if (note.body.trim().isNotEmpty)
+                        Text(
+                          note.body,
+                          maxLines: 7,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.bodyMedium
+                              ?.copyWith(color: secondary, height: 1.35),
+                        ),
+                      const SizedBox(height: 14),
+                      Text(
+                        note.displayDate,
+                        style: theme.textTheme.labelSmall
+                            ?.copyWith(color: tertiary),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
