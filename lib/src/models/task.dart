@@ -1,4 +1,6 @@
+import 'subtask.dart';
 import 'task_priority.dart';
+import 'task_recurrence.dart';
 
 /// Immutable domain model for a to-do task.
 ///
@@ -13,6 +15,8 @@ class Task {
     required this.updatedAt,
     this.reminderAt,
     this.priority = TaskPriority.none,
+    this.recurrence = Recurrence.none,
+    this.subtasks = const [],
   });
 
   final int? id;
@@ -26,6 +30,12 @@ class Task {
   /// Importance level. Persisted as its [TaskPriority.index] in the DB.
   final TaskPriority priority;
 
+  /// How often the reminder repeats. Persisted as [Recurrence.index].
+  final Recurrence recurrence;
+
+  /// Checklist items. Persisted as JSON in the `subtasks` column.
+  final List<Subtask> subtasks;
+
   factory Task.fromMap(Map<String, Object?> map) {
     final reminderMillis = map['reminderAt'] as int?;
     return Task(
@@ -37,6 +47,8 @@ class Task {
           ? null
           : DateTime.fromMillisecondsSinceEpoch(reminderMillis),
       priority: TaskPriority.fromValue(map['priority'] as int?),
+      recurrence: Recurrence.fromValue(map['recurrence'] as int?),
+      subtasks: Subtask.decode(map['subtasks'] as String?),
     );
   }
 
@@ -48,13 +60,21 @@ class Task {
         'date': updatedAt,
         'reminderAt': reminderAt?.millisecondsSinceEpoch,
         'priority': priority.index,
+        'recurrence': recurrence.index,
+        'subtasks': Subtask.encode(subtasks),
       };
 
   /// A stable notification id derived from the row id.
   int? get notificationId => id;
 
   bool get hasActiveReminder =>
-      reminderAt != null && !isComplete && reminderAt!.isAfter(DateTime.now());
+      reminderAt != null &&
+      !isComplete &&
+      (recurrence.isSet || reminderAt!.isAfter(DateTime.now()));
+
+  bool get hasSubtasks => subtasks.isNotEmpty;
+
+  int get completedSubtasks => subtasks.where((s) => s.isComplete).length;
 
   Task copyWith({
     int? id,
@@ -63,6 +83,8 @@ class Task {
     String? updatedAt,
     DateTime? reminderAt,
     TaskPriority? priority,
+    Recurrence? recurrence,
+    List<Subtask>? subtasks,
     bool clearReminder = false,
   }) =>
       Task(
@@ -72,5 +94,7 @@ class Task {
         updatedAt: updatedAt ?? this.updatedAt,
         reminderAt: clearReminder ? null : (reminderAt ?? this.reminderAt),
         priority: priority ?? this.priority,
+        recurrence: recurrence ?? this.recurrence,
+        subtasks: subtasks ?? this.subtasks,
       );
 }

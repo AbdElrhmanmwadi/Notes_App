@@ -12,7 +12,7 @@ class AppDatabase {
   static final AppDatabase instance = AppDatabase._();
 
   static const _dbName = 'note.db';
-  static const _dbVersion = 7;
+  static const _dbVersion = 8;
 
   static const notesTable = 'notes';
   static const tasksTable = 'tasks';
@@ -98,7 +98,9 @@ class AppDatabase {
         date       TEXT,
         isComplete INTEGER NOT NULL DEFAULT 0,
         reminderAt INTEGER,
-        priority   INTEGER NOT NULL DEFAULT 0
+        priority   INTEGER NOT NULL DEFAULT 0,
+        recurrence INTEGER NOT NULL DEFAULT 0,
+        subtasks   TEXT
       )
     ''');
     await batch.commit();
@@ -138,6 +140,10 @@ class AppDatabase {
         'ALTER TABLE $notesTable ADD COLUMN tags TEXT');
     await _ensureColumn(db, tasksTable, 'priority',
         'ALTER TABLE $tasksTable ADD COLUMN priority INTEGER NOT NULL DEFAULT 0');
+    await _ensureColumn(db, tasksTable, 'recurrence',
+        'ALTER TABLE $tasksTable ADD COLUMN recurrence INTEGER NOT NULL DEFAULT 0');
+    await _ensureColumn(db, tasksTable, 'subtasks',
+        'ALTER TABLE $tasksTable ADD COLUMN subtasks TEXT');
   }
 
   /// Adds [column] via [alterStatement] when it is missing.

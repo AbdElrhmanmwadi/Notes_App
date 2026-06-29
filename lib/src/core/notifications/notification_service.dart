@@ -4,6 +4,8 @@ import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
+import '../../models/task_recurrence.dart';
+
 /// Wraps `flutter_local_notifications` for scheduling task reminders.
 ///
 /// All methods are defensive: notification failures (e.g. permission denied)
@@ -58,9 +60,17 @@ class NotificationService {
     required int id,
     required String title,
     required DateTime when,
+    Recurrence recurrence = Recurrence.none,
   }) async {
     if (!_initialized) await init();
-    if (when.isBefore(DateTime.now())) return;
+    // A one-off reminder in the past is dropped; a recurring one is kept — the
+    // plugin computes its next matching occurrence from [matchComponents].
+    if (recurrence == Recurrence.none && when.isBefore(DateTime.now())) return;
+    final matchComponents = switch (recurrence) {
+      Recurrence.none => null,
+      Recurrence.daily => DateTimeComponents.time,
+      Recurrence.weekly => DateTimeComponents.dayOfWeekAndTime,
+    };
     try {
       await _plugin.zonedSchedule(
         id,
@@ -78,7 +88,7 @@ class NotificationService {
           iOS: DarwinNotificationDetails(),
         ),
         androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-        matchDateTimeComponents: null,
+        matchDateTimeComponents: matchComponents,
       );
     } catch (e) {
       debugPrint('NotificationService.schedule failed: $e');

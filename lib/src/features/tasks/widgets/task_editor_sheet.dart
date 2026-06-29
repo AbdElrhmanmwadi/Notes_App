@@ -2,10 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
+import '../../../models/subtask.dart';
 import '../../../models/task_priority.dart';
+import '../../../models/task_recurrence.dart';
 
-/// Bottom sheet for creating or editing a task, including an optional reminder
-/// and priority. The "Save" button stays disabled until the field is non-empty.
+/// The fields a task editor returns on save.
+class TaskDraft {
+  const TaskDraft(
+      this.title, this.reminderAt, this.priority, this.recurrence, this.subtasks);
+
+  final String title;
+  final DateTime? reminderAt;
+  final TaskPriority priority;
+  final Recurrence recurrence;
+  final List<Subtask> subtasks;
+}
+
+/// Bottom sheet for creating or editing a task: title, optional reminder (with
+/// recurrence), priority and a subtask checklist. The "Save" button stays
+/// disabled until the title is non-empty.
 class TaskEditorSheet extends StatefulWidget {
   const TaskEditorSheet({
     super.key,
@@ -13,15 +28,18 @@ class TaskEditorSheet extends StatefulWidget {
     this.initialValue = '',
     this.initialReminder,
     this.initialPriority = TaskPriority.none,
+    this.initialRecurrence = Recurrence.none,
+    this.initialSubtasks = const [],
     this.hint = 'Enter a task',
   });
 
-  /// Called with the trimmed text, the chosen reminder (or null) and priority.
-  final Future<void> Function(
-      String value, DateTime? reminderAt, TaskPriority priority) onSubmit;
+  /// Called with the assembled [TaskDraft].
+  final Future<void> Function(TaskDraft draft) onSubmit;
   final String initialValue;
   final DateTime? initialReminder;
   final TaskPriority initialPriority;
+  final Recurrence initialRecurrence;
+  final List<Subtask> initialSubtasks;
   final String hint;
 
   @override
@@ -30,21 +48,122 @@ class TaskEditorSheet extends StatefulWidget {
 
 class _TaskEditorSheetState extends State<TaskEditorSheet> {
   late final TextEditingController _controller;
+  late final TextEditingController _subtaskController;
   DateTime? _reminder;
   late TaskPriority _priority;
+  late Recurrence _recurrence;
+  late List<Subtask> _subtasks;
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController(text: widget.initialValue);
+    _subtaskController = TextEditingController();
     _reminder = widget.initialReminder;
     _priority = widget.initialPriority;
+    _recurrence = widget.initialRecurrence;
+    _subtasks = List<Subtask>.from(widget.initialSubtasks);
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _subtaskController.dispose();
     super.dispose();
+  }
+
+  void _addSubtask() {
+    final text = _subtaskController.text.trim();
+    if (text.isEmpty) return;
+    setState(() {
+      _subtasks = [..._subtasks, Subtask(title: text)];
+      _subtaskController.clear();
+    });
+  }
+
+  void _toggleSubtask(int index) {
+    setState(() {
+      _subtasks = [..._subtasks];
+      _subtasks[index] =
+          _subtasks[index].copyWith(isComplete: !_subtasks[index].isComplete);
+    });
+  }
+
+  void _removeSubtask(int index) {
+    setState(() => _subtasks = [..._subtasks]..removeAt(index));
+  }
+
+  Widget _buildSubtasks(ThemeData theme) {
+    final done = _subtasks.where((s) => s.isComplete).length;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Icon(Icons.checklist, size: 18, color: theme.colorScheme.outline),
+            const SizedBox(width: 8),
+            Text(
+              _subtasks.isEmpty ? 'Subtasks' : 'Subtasks ($done/${_subtasks.length})',
+              style: theme.textTheme.labelLarge
+                  ?.copyWith(color: theme.colorScheme.outline),
+            ),
+          ],
+        ),
+        for (var i = 0; i < _subtasks.length; i++)
+          Row(
+            children: [
+              SizedBox(
+                width: 36,
+                child: Checkbox(
+                  value: _subtasks[i].isComplete,
+                  onChanged: (_) => _toggleSubtask(i),
+                  visualDensity: VisualDensity.compact,
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  _subtasks[i].title,
+                  style: _subtasks[i].isComplete
+                      ? theme.textTheme.bodyMedium?.copyWith(
+                          decoration: TextDecoration.lineThrough,
+                          color: theme.colorScheme.outline,
+                        )
+                      : theme.textTheme.bodyMedium,
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.close, size: 18),
+                visualDensity: VisualDensity.compact,
+                onPressed: () => _removeSubtask(i),
+              ),
+            ],
+          ),
+        Row(
+          children: [
+            const SizedBox(width: 4),
+            Expanded(
+              child: TextField(
+                controller: _subtaskController,
+                textCapitalization: TextCapitalization.sentences,
+                textInputAction: TextInputAction.done,
+                onSubmitted: (_) => _addSubtask(),
+                decoration: const InputDecoration(
+                  hintText: 'Add a subtask…',
+                  filled: false,
+                  border: InputBorder.none,
+                  isDense: true,
+                ),
+              ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.add),
+              onPressed: _addSubtask,
+            ),
+          ],
+        ),
+      ],
+    );
   }
 
   Future<void> _pickReminder() async {
@@ -85,76 +204,120 @@ class _TaskEditorSheetState extends State<TaskEditorSheet> {
           color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(20),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            TextField(
-              controller: _controller,
-              autofocus: true,
-              maxLines: 4,
-              minLines: 1,
-              textCapitalization: TextCapitalization.sentences,
-              onChanged: (_) => setState(() {}),
-              style: theme.textTheme.titleMedium,
-              decoration: InputDecoration(
-                hintText: widget.hint,
-                filled: false,
-                border: InputBorder.none,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: _reminder == null
-                  ? TextButton.icon(
-                      onPressed: _pickReminder,
-                      icon: const Icon(Icons.alarm_add_outlined),
-                      label: const Text('Set reminder'),
-                    )
-                  : InputChip(
-                      avatar: const Icon(Icons.alarm, size: 18),
-                      label:
-                          Text(DateFormat('MMM d, h:mm a').format(_reminder!)),
-                      onPressed: _pickReminder,
-                      onDeleted: () => setState(() => _reminder = null),
-                    ),
-            ),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              children: [
-                for (final p in TaskPriority.values)
-                  ChoiceChip(
-                    label: Text(p == TaskPriority.none ? 'No priority' : p.label),
-                    selected: _priority == p,
-                    onSelected: (_) => setState(() => _priority = p),
-                    avatar: p.color == null
-                        ? null
-                        : Icon(Icons.flag, size: 16, color: p.color),
-                    visualDensity: VisualDensity.compact,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.7,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Flexible(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      TextField(
+                        controller: _controller,
+                        autofocus: true,
+                        maxLines: 4,
+                        minLines: 1,
+                        textCapitalization: TextCapitalization.sentences,
+                        onChanged: (_) => setState(() {}),
+                        style: theme.textTheme.titleMedium,
+                        decoration: InputDecoration(
+                          hintText: widget.hint,
+                          filled: false,
+                          border: InputBorder.none,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: _reminder == null
+                            ? TextButton.icon(
+                                onPressed: _pickReminder,
+                                icon: const Icon(Icons.alarm_add_outlined),
+                                label: const Text('Set reminder'),
+                              )
+                            : InputChip(
+                                avatar: const Icon(Icons.alarm, size: 18),
+                                label: Text(DateFormat('MMM d, h:mm a')
+                                    .format(_reminder!)),
+                                onPressed: _pickReminder,
+                                onDeleted: () =>
+                                    setState(() => _reminder = null),
+                              ),
+                      ),
+                      if (_reminder != null) ...[
+                        const SizedBox(height: 4),
+                        Wrap(
+                          spacing: 8,
+                          children: [
+                            for (final r in Recurrence.values)
+                              ChoiceChip(
+                                label: Text(r.label),
+                                selected: _recurrence == r,
+                                onSelected: (_) =>
+                                    setState(() => _recurrence = r),
+                                avatar: r.isSet
+                                    ? const Icon(Icons.repeat, size: 16)
+                                    : null,
+                                visualDensity: VisualDensity.compact,
+                              ),
+                          ],
+                        ),
+                      ],
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8,
+                        children: [
+                          for (final p in TaskPriority.values)
+                            ChoiceChip(
+                              label: Text(
+                                  p == TaskPriority.none ? 'No priority' : p.label),
+                              selected: _priority == p,
+                              onSelected: (_) => setState(() => _priority = p),
+                              avatar: p.color == null
+                                  ? null
+                                  : Icon(Icons.flag, size: 16, color: p.color),
+                              visualDensity: VisualDensity.compact,
+                            ),
+                        ],
+                      ),
+                      _buildSubtasks(theme),
+                    ],
                   ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                TextButton(onPressed: Get.back, child: const Text('Cancel')),
-                const SizedBox(width: 8),
-                FilledButton(
-                  onPressed: canSave
-                      ? () async {
-                          await widget.onSubmit(
-                              _controller.text, _reminder, _priority);
-                          Get.back();
-                        }
-                      : null,
-                  child: const Text('Save'),
                 ),
-              ],
-            ),
-          ],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(onPressed: Get.back, child: const Text('Cancel')),
+                  const SizedBox(width: 8),
+                  FilledButton(
+                    onPressed: canSave
+                        ? () async {
+                            await widget.onSubmit(TaskDraft(
+                              _controller.text,
+                              _reminder,
+                              _priority,
+                              _reminder == null
+                                  ? Recurrence.none
+                                  : _recurrence,
+                              _subtasks,
+                            ));
+                            Get.back();
+                          }
+                        : null,
+                    child: const Text('Save'),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

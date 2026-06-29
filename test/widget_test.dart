@@ -6,8 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:note/src/core/theme/note_background.dart';
 import 'package:note/src/models/note.dart';
+import 'package:note/src/models/subtask.dart';
 import 'package:note/src/models/task.dart';
 import 'package:note/src/models/task_priority.dart';
+import 'package:note/src/models/task_recurrence.dart';
 
 void main() {
   group('Note', () {
@@ -82,6 +84,42 @@ void main() {
       expect(Task.fromMap({'task': 'a'}).priority, TaskPriority.none);
       expect(Task.fromMap({'task': 'a', 'priority': 99}).priority,
           TaskPriority.none);
+    });
+
+    test('recurrence round-trips and defaults to none', () {
+      const task = Task(
+          title: 'a',
+          isComplete: false,
+          updatedAt: '',
+          recurrence: Recurrence.weekly);
+      expect(task.toMap()['recurrence'], Recurrence.weekly.index);
+      expect(Task.fromMap(task.toMap()).recurrence, Recurrence.weekly);
+      expect(Task.fromMap({'task': 'a'}).recurrence, Recurrence.none);
+    });
+
+    test('subtasks round-trip through the JSON column with progress', () {
+      const task = Task(
+        title: 'a',
+        isComplete: false,
+        updatedAt: '',
+        subtasks: [
+          Subtask(title: 'one', isComplete: true),
+          Subtask(title: 'two'),
+        ],
+      );
+      final restored = Task.fromMap(task.toMap());
+      expect(restored.subtasks, hasLength(2));
+      expect(restored.subtasks.first.title, 'one');
+      expect(restored.subtasks.first.isComplete, isTrue);
+      expect(restored.completedSubtasks, 1);
+      expect(restored.hasSubtasks, isTrue);
+    });
+
+    test('empty subtasks persist as null and tolerate garbage', () {
+      const task = Task(title: 'a', isComplete: false, updatedAt: '');
+      expect(task.toMap()['subtasks'], isNull);
+      expect(Subtask.decode(null), isEmpty);
+      expect(Subtask.decode('not json'), isEmpty);
     });
   });
 

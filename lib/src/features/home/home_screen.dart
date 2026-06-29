@@ -49,8 +49,13 @@ class _HomeScreenState extends State<HomeScreen>
       Get.bottomSheet(
         TaskEditorSheet(
           hint: 'Enter a task to save',
-          onSubmit: (value, reminderAt, priority) =>
-              tasks.add(value, reminderAt: reminderAt, priority: priority),
+          onSubmit: (draft) => tasks.add(
+            draft.title,
+            reminderAt: draft.reminderAt,
+            priority: draft.priority,
+            recurrence: draft.recurrence,
+            subtasks: draft.subtasks,
+          ),
         ),
         isScrollControlled: true,
       );
