@@ -1,3 +1,5 @@
+import 'task_priority.dart';
+
 /// Immutable domain model for a to-do task.
 ///
 /// `isComplete` is exposed as a real [bool]; the SQLite `0/1` mapping is an
@@ -10,6 +12,7 @@ class Task {
     required this.isComplete,
     required this.updatedAt,
     this.reminderAt,
+    this.priority = TaskPriority.none,
   });
 
   final int? id;
@@ -19,6 +22,9 @@ class Task {
 
   /// Optional reminder time. Stored as milliseconds since epoch.
   final DateTime? reminderAt;
+
+  /// Importance level. Persisted as its [TaskPriority.index] in the DB.
+  final TaskPriority priority;
 
   factory Task.fromMap(Map<String, Object?> map) {
     final reminderMillis = map['reminderAt'] as int?;
@@ -30,6 +36,7 @@ class Task {
       reminderAt: reminderMillis == null
           ? null
           : DateTime.fromMillisecondsSinceEpoch(reminderMillis),
+      priority: TaskPriority.fromValue(map['priority'] as int?),
     );
   }
 
@@ -40,6 +47,7 @@ class Task {
         'isComplete': isComplete ? 1 : 0,
         'date': updatedAt,
         'reminderAt': reminderAt?.millisecondsSinceEpoch,
+        'priority': priority.index,
       };
 
   /// A stable notification id derived from the row id.
@@ -54,6 +62,7 @@ class Task {
     bool? isComplete,
     String? updatedAt,
     DateTime? reminderAt,
+    TaskPriority? priority,
     bool clearReminder = false,
   }) =>
       Task(
@@ -62,5 +71,6 @@ class Task {
         isComplete: isComplete ?? this.isComplete,
         updatedAt: updatedAt ?? this.updatedAt,
         reminderAt: clearReminder ? null : (reminderAt ?? this.reminderAt),
+        priority: priority ?? this.priority,
       );
 }

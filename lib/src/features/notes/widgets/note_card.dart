@@ -93,6 +93,29 @@ class NoteCard extends StatelessWidget {
                           style: theme.textTheme.bodyMedium
                               ?.copyWith(color: secondary, height: 1.35),
                         ),
+                      if (note.tags.isNotEmpty) ...[
+                        const SizedBox(height: 12),
+                        Wrap(
+                          spacing: 6,
+                          runSpacing: 6,
+                          children: [
+                            for (final tag in note.tags)
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 3),
+                                decoration: BoxDecoration(
+                                  color: secondary.withValues(alpha: 0.14),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  '#$tag',
+                                  style: theme.textTheme.labelSmall
+                                      ?.copyWith(color: secondary),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ],
                       const SizedBox(height: 14),
                       Text(
                         note.displayDate,

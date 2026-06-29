@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../core/database/app_database.dart';
 import '../core/notifications/notification_service.dart';
 import '../models/task.dart';
+import '../models/task_priority.dart';
 
 /// Reactive store for tasks, split into active and completed buckets, with
 /// optional reminder scheduling.
@@ -16,8 +17,16 @@ class TasksController extends GetxController {
   /// Whether the collapsible "Completed" section is expanded.
   final RxBool showCompleted = true.obs;
 
-  List<Task> get activeTasks =>
-      _tasks.where((t) => !t.isComplete).toList(growable: false);
+  /// Active tasks, highest priority first; ties keep newest-first order.
+  List<Task> get activeTasks {
+    final active = _tasks.where((t) => !t.isComplete).toList();
+    active.sort((a, b) {
+      final byPriority = b.priority.index.compareTo(a.priority.index);
+      if (byPriority != 0) return byPriority;
+      return (b.id ?? 0).compareTo(a.id ?? 0); // newest first within a tier
+    });
+    return active;
+  }
 
   List<Task> get completedTasks =>
       _tasks.where((t) => t.isComplete).toList(growable: false);
@@ -35,7 +44,8 @@ class TasksController extends GetxController {
     isLoading.value = false;
   }
 
-  Future<void> add(String title, {DateTime? reminderAt}) async {
+  Future<void> add(String title,
+      {DateTime? reminderAt, TaskPriority priority = TaskPriority.none}) async {
     if (title.trim().isEmpty) return;
     final id = await _db.insert(
       AppDatabase.tasksTable,
@@ -44,6 +54,7 @@ class TasksController extends GetxController {
         isComplete: false,
         updatedAt: DateTime.now().toIso8601String(),
         reminderAt: reminderAt,
+        priority: priority,
       ).toMap(),
     );
     if (reminderAt != null) {
@@ -54,17 +65,22 @@ class TasksController extends GetxController {
   }
 
   Future<void> edit(Task task,
-      {String? title, DateTime? reminderAt, bool clearReminder = false}) async {
+      {String? title,
+      DateTime? reminderAt,
+      TaskPriority? priority,
+      bool clearReminder = false}) async {
     if (task.id == null) return;
     final newTitle = (title ?? task.title).trim();
     if (newTitle.isEmpty) return;
     final newReminder = clearReminder ? null : (reminderAt ?? task.reminderAt);
+    final newPriority = priority ?? task.priority;
 
     await _db.update(
       AppDatabase.tasksTable,
       {
         'task': newTitle,
         'reminderAt': newReminder?.millisecondsSinceEpoch,
+        'priority': newPriority.index,
       },
       where: 'id = ?',
       whereArgs: [task.id],

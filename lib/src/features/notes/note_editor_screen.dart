@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -26,6 +27,7 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
   late final TextEditingController _bodyController;
   String? _background;
   late bool _isPinned;
+  late List<String> _tags;
 
   @override
   void initState() {
@@ -34,6 +36,7 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
     _bodyController = TextEditingController(text: widget.note?.body ?? '');
     _background = widget.note?.background;
     _isPinned = widget.note?.isPinned ?? false;
+    _tags = List<String>.from(widget.note?.tags ?? const []);
   }
 
   @override
@@ -52,7 +55,8 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
     return _titleController.text != note.title ||
         _bodyController.text != note.body ||
         _background != note.background ||
-        _isPinned != note.isPinned;
+        _isPinned != note.isPinned ||
+        !listEquals(_tags, note.tags);
   }
 
   Future<void> _persist() async {
@@ -65,6 +69,7 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
         background: _background,
         clearBackground: _background == null,
         isPinned: _isPinned,
+        tags: _tags,
       ),
     );
   }
@@ -171,6 +176,74 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
     Navigator.of(sheetContext).pop();
   }
 
+  Future<void> _addTag() async {
+    final controller = TextEditingController();
+    final value = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Add tag'),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          textCapitalization: TextCapitalization.none,
+          decoration: const InputDecoration(hintText: 'e.g. work, ideas'),
+          onSubmitted: (v) => Navigator.of(dialogContext).pop(v),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(controller.text),
+            child: const Text('Add'),
+          ),
+        ],
+      ),
+    );
+    controller.dispose();
+    if (value == null) return;
+    final merged = Note.sanitizeTags([..._tags, value]);
+    if (!listEquals(merged, _tags)) setState(() => _tags = merged);
+  }
+
+  void _removeTag(String tag) {
+    setState(() => _tags = _tags.where((t) => t != tag).toList());
+  }
+
+  Widget _buildTagsSection(Color onColor, Color hintColor) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 20),
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: [
+          for (final tag in _tags)
+            Chip(
+              label: Text(tag),
+              labelStyle: TextStyle(color: onColor),
+              backgroundColor: onColor.withValues(alpha: 0.12),
+              side: BorderSide(color: onColor.withValues(alpha: 0.24)),
+              deleteIconColor: onColor,
+              onDeleted: () => _removeTag(tag),
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              visualDensity: VisualDensity.compact,
+            ),
+          ActionChip(
+            avatar: Icon(Icons.add, size: 18, color: onColor),
+            label: Text('Tag', style: TextStyle(color: onColor)),
+            backgroundColor: Colors.transparent,
+            side: BorderSide(color: hintColor),
+            onPressed: _addTag,
+            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            visualDensity: VisualDensity.compact,
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -265,6 +338,7 @@ class _NoteEditorScreenState extends State<NoteEditorScreen> {
                           border: InputBorder.none,
                         ),
                       ),
+                      _buildTagsSection(onColor, hintColor),
                     ],
                   ),
                 ),

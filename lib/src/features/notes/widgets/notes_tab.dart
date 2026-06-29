@@ -72,6 +72,7 @@ class NotesTab extends StatelessWidget {
       child: Column(
         children: [
           NotesSearchField(onChanged: (v) => controller.query.value = v),
+          _TagFilterBar(controller: controller),
           const SizedBox(height: 16),
           Expanded(
             child: Obx(() {
@@ -107,5 +108,45 @@ class NotesTab extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+/// Horizontal row of selectable tag chips. Hidden entirely when no note has a
+/// tag. Tapping a chip filters the grid; tapping the active chip clears it.
+class _TagFilterBar extends StatelessWidget {
+  const _TagFilterBar({required this.controller});
+
+  final NotesController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() {
+      final tags = controller.allTags;
+      if (tags.isEmpty) return const SizedBox.shrink();
+      final selected = controller.tagFilter.value;
+
+      return Padding(
+        padding: const EdgeInsets.only(top: 12),
+        child: SizedBox(
+          height: 36,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: tags.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 8),
+            itemBuilder: (context, index) {
+              final tag = tags[index];
+              final isSelected = tag == selected;
+              return FilterChip(
+                label: Text(tag),
+                selected: isSelected,
+                onSelected: (_) =>
+                    controller.tagFilter.value = isSelected ? null : tag,
+                visualDensity: VisualDensity.compact,
+              );
+            },
+          ),
+        ),
+      );
+    });
   }
 }

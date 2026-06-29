@@ -7,12 +7,12 @@ import 'controllers/tasks_controller.dart';
 import 'core/theme/app_theme.dart';
 import 'features/home/home_screen.dart';
 
-/// Registers the long-lived controllers exactly once, before the first screen
-/// is built.
+/// Registers the long-lived feature controllers exactly once, before the first
+/// screen is built. [SettingsController] is registered earlier (in `main`) so
+/// the root widget can read the theme reactively.
 class AppBinding extends Bindings {
   @override
   void dependencies() {
-    Get.put(SettingsController(), permanent: true);
     Get.put(NotesController(), permanent: true);
     Get.put(TasksController(), permanent: true);
   }
@@ -23,14 +23,19 @@ class NoteApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Notes',
-      theme: AppTheme.light(),
-      darkTheme: AppTheme.dark(),
-      themeMode: ThemeMode.system,
-      initialBinding: AppBinding(),
-      home: const HomeScreen(),
+    final settings = Get.find<SettingsController>();
+    // Rebuild the app shell when the theme mode or accent colour changes so the
+    // whole UI re-themes instantly.
+    return Obx(
+      () => GetMaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Notes',
+        theme: AppTheme.light(seed: settings.accentColor.value),
+        darkTheme: AppTheme.dark(seed: settings.accentColor.value),
+        themeMode: settings.themeMode.value,
+        initialBinding: AppBinding(),
+        home: const HomeScreen(),
+      ),
     );
   }
 }

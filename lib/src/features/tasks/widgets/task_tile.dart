@@ -35,14 +35,24 @@ class TaskTile extends StatelessWidget {
           controlAffinity: ListTileControlAffinity.leading,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: Text(
-            task.title,
-            style: task.isComplete
-                ? theme.textTheme.bodyLarge?.copyWith(
-                    decoration: TextDecoration.lineThrough,
-                    color: theme.colorScheme.outline,
-                  )
-                : theme.textTheme.bodyLarge,
+          title: Row(
+            children: [
+              if (task.priority.isSet && !task.isComplete) ...[
+                Icon(Icons.flag, size: 16, color: task.priority.color),
+                const SizedBox(width: 6),
+              ],
+              Expanded(
+                child: Text(
+                  task.title,
+                  style: task.isComplete
+                      ? theme.textTheme.bodyLarge?.copyWith(
+                          decoration: TextDecoration.lineThrough,
+                          color: theme.colorScheme.outline,
+                        )
+                      : theme.textTheme.bodyLarge,
+                ),
+              ),
+            ],
           ),
           subtitle: reminder == null
               ? null

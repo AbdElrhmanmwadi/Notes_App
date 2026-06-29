@@ -5,15 +5,17 @@ import 'package:flutter/material.dart';
 class AppTheme {
   AppTheme._();
 
-  static const Color _seed = Color(0xFFFFB300); // amber, matches the brand FAB.
+  /// Default brand seed (amber, matches the FAB). Used when the user hasn't
+  /// chosen a custom accent.
+  static const Color defaultSeed = Color(0xFFFFB300);
   static const String _fontFamily = 'Roboto';
 
-  static ThemeData light() => _build(Brightness.light);
-  static ThemeData dark() => _build(Brightness.dark);
+  static ThemeData light({Color? seed}) => _build(Brightness.light, seed);
+  static ThemeData dark({Color? seed}) => _build(Brightness.dark, seed);
 
-  static ThemeData _build(Brightness brightness) {
-    final scheme =
-        ColorScheme.fromSeed(seedColor: _seed, brightness: brightness);
+  static ThemeData _build(Brightness brightness, [Color? seed]) {
+    final scheme = ColorScheme.fromSeed(
+        seedColor: seed ?? defaultSeed, brightness: brightness);
     return ThemeData(
       useMaterial3: true,
       colorScheme: scheme,

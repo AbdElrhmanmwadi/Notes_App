@@ -16,11 +16,13 @@ class TasksTab extends StatelessWidget {
       TaskEditorSheet(
         initialValue: task.title,
         initialReminder: task.reminderAt,
+        initialPriority: task.priority,
         hint: 'Edit task',
-        onSubmit: (value, reminderAt) => controller.edit(
+        onSubmit: (value, reminderAt, priority) => controller.edit(
           task,
           title: value,
           reminderAt: reminderAt,
+          priority: priority,
           clearReminder: reminderAt == null,
         ),
       ),

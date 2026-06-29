@@ -12,7 +12,7 @@ class AppDatabase {
   static final AppDatabase instance = AppDatabase._();
 
   static const _dbName = 'note.db';
-  static const _dbVersion = 6;
+  static const _dbVersion = 7;
 
   static const notesTable = 'notes';
   static const tasksTable = 'tasks';
@@ -87,6 +87,7 @@ class AppDatabase {
         date       TEXT,
         color      INTEGER,
         background TEXT,
+        tags       TEXT,
         isPinned   INTEGER NOT NULL DEFAULT 0
       )
     ''');
@@ -96,7 +97,8 @@ class AppDatabase {
         task       TEXT    NOT NULL,
         date       TEXT,
         isComplete INTEGER NOT NULL DEFAULT 0,
-        reminderAt INTEGER
+        reminderAt INTEGER,
+        priority   INTEGER NOT NULL DEFAULT 0
       )
     ''');
     await batch.commit();
@@ -132,6 +134,10 @@ class AppDatabase {
         'ALTER TABLE $notesTable ADD COLUMN background TEXT');
     await _ensureColumn(db, notesTable, 'isPinned',
         'ALTER TABLE $notesTable ADD COLUMN isPinned INTEGER NOT NULL DEFAULT 0');
+    await _ensureColumn(db, notesTable, 'tags',
+        'ALTER TABLE $notesTable ADD COLUMN tags TEXT');
+    await _ensureColumn(db, tasksTable, 'priority',
+        'ALTER TABLE $tasksTable ADD COLUMN priority INTEGER NOT NULL DEFAULT 0');
   }
 
   /// Adds [column] via [alterStatement] when it is missing.

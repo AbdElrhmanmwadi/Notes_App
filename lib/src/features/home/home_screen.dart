@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../common/widgets/theme_menu_button.dart';
 import '../../controllers/tasks_controller.dart';
 import '../notes/note_editor_screen.dart';
 import '../notes/widgets/notes_tab.dart';
+import '../settings/settings_screen.dart';
 import '../tasks/widgets/task_editor_sheet.dart';
 import '../tasks/widgets/tasks_tab.dart';
 
@@ -49,8 +49,8 @@ class _HomeScreenState extends State<HomeScreen>
       Get.bottomSheet(
         TaskEditorSheet(
           hint: 'Enter a task to save',
-          onSubmit: (value, reminderAt) =>
-              tasks.add(value, reminderAt: reminderAt),
+          onSubmit: (value, reminderAt, priority) =>
+              tasks.add(value, reminderAt: reminderAt, priority: priority),
         ),
         isScrollControlled: true,
       );
@@ -66,7 +66,14 @@ class _HomeScreenState extends State<HomeScreen>
           'Notes',
           style: TextStyle(fontWeight: FontWeight.w700),
         ),
-        actions: const [ThemeMenuButton(), SizedBox(width: 4)],
+        actions: [
+          IconButton(
+            tooltip: 'Settings',
+            icon: const Icon(Icons.settings_outlined),
+            onPressed: () => Get.to(() => const SettingsScreen()),
+          ),
+          const SizedBox(width: 4),
+        ],
         bottom: TabBar(
           controller: _tabController,
           indicatorSize: TabBarIndicatorSize.tab,

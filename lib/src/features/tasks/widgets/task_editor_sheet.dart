@@ -2,21 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-/// Bottom sheet for creating or editing a task, including an optional reminder.
-/// The "Save" button stays disabled until the field is non-empty.
+import '../../../models/task_priority.dart';
+
+/// Bottom sheet for creating or editing a task, including an optional reminder
+/// and priority. The "Save" button stays disabled until the field is non-empty.
 class TaskEditorSheet extends StatefulWidget {
   const TaskEditorSheet({
     super.key,
     required this.onSubmit,
     this.initialValue = '',
     this.initialReminder,
+    this.initialPriority = TaskPriority.none,
     this.hint = 'Enter a task',
   });
 
-  /// Called with the trimmed text and the chosen reminder (or null).
-  final Future<void> Function(String value, DateTime? reminderAt) onSubmit;
+  /// Called with the trimmed text, the chosen reminder (or null) and priority.
+  final Future<void> Function(
+      String value, DateTime? reminderAt, TaskPriority priority) onSubmit;
   final String initialValue;
   final DateTime? initialReminder;
+  final TaskPriority initialPriority;
   final String hint;
 
   @override
@@ -26,12 +31,14 @@ class TaskEditorSheet extends StatefulWidget {
 class _TaskEditorSheetState extends State<TaskEditorSheet> {
   late final TextEditingController _controller;
   DateTime? _reminder;
+  late TaskPriority _priority;
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController(text: widget.initialValue);
     _reminder = widget.initialReminder;
+    _priority = widget.initialPriority;
   }
 
   @override
@@ -113,6 +120,22 @@ class _TaskEditorSheetState extends State<TaskEditorSheet> {
                       onDeleted: () => setState(() => _reminder = null),
                     ),
             ),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              children: [
+                for (final p in TaskPriority.values)
+                  ChoiceChip(
+                    label: Text(p == TaskPriority.none ? 'No priority' : p.label),
+                    selected: _priority == p,
+                    onSelected: (_) => setState(() => _priority = p),
+                    avatar: p.color == null
+                        ? null
+                        : Icon(Icons.flag, size: 16, color: p.color),
+                    visualDensity: VisualDensity.compact,
+                  ),
+              ],
+            ),
             const SizedBox(height: 12),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -122,7 +145,8 @@ class _TaskEditorSheetState extends State<TaskEditorSheet> {
                 FilledButton(
                   onPressed: canSave
                       ? () async {
-                          await widget.onSubmit(_controller.text, _reminder);
+                          await widget.onSubmit(
+                              _controller.text, _reminder, _priority);
                           Get.back();
                         }
                       : null,

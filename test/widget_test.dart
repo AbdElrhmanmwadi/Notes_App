@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:note/src/core/theme/note_background.dart';
 import 'package:note/src/models/note.dart';
 import 'package:note/src/models/task.dart';
+import 'package:note/src/models/task_priority.dart';
 
 void main() {
   group('Note', () {
@@ -32,6 +33,25 @@ void main() {
       expect(const Note(title: 'x', body: '', updatedAt: '').isEmpty, isFalse);
     });
 
+    test('tags round-trip through the comma-separated column', () {
+      const note = Note(
+          title: 't', body: 'b', updatedAt: '', tags: ['work', 'ideas']);
+      expect(note.toMap()['tags'], 'work,ideas');
+      expect(Note.fromMap(note.toMap()).tags, ['work', 'ideas']);
+    });
+
+    test('empty tags persist as null and decode to an empty list', () {
+      const note = Note(title: 't', body: 'b', updatedAt: '');
+      expect(note.toMap()['tags'], isNull);
+      expect(Note.fromMap({'note': 'b', 'tags': null}).tags, isEmpty);
+      expect(Note.fromMap({'note': 'b', 'tags': '  '}).tags, isEmpty);
+    });
+
+    test('sanitizeTags trims, drops commas, and dedupes case-insensitively', () {
+      expect(Note.sanitizeTags([' Work ', 'work', 'a,b', '']),
+          ['Work', 'a b']);
+    });
+
     test('displayDate falls back to the raw value for legacy rows', () {
       expect(
           const Note(title: '', body: '', updatedAt: 'Mon, Jun 24').displayDate,
@@ -46,6 +66,22 @@ void main() {
 
       const done = Task(title: 'a', isComplete: true, updatedAt: '');
       expect(done.toMap()['isComplete'], 1);
+    });
+
+    test('priority round-trips through the integer column', () {
+      const task = Task(
+          title: 'a',
+          isComplete: false,
+          updatedAt: '',
+          priority: TaskPriority.high);
+      expect(task.toMap()['priority'], TaskPriority.high.index);
+      expect(Task.fromMap(task.toMap()).priority, TaskPriority.high);
+    });
+
+    test('priority defaults to none for null/out-of-range values', () {
+      expect(Task.fromMap({'task': 'a'}).priority, TaskPriority.none);
+      expect(Task.fromMap({'task': 'a', 'priority': 99}).priority,
+          TaskPriority.none);
     });
   });
 
