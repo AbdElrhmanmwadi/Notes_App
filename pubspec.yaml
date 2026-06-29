@@ -30,6 +30,10 @@ dependencies:
   # scheduling across DST.
   timezone: ^0.10.1
   flutter_timezone: ^4.1.1
+  # Picking photos from the gallery as note backgrounds, and a stable
+  # app-documents directory to persist them.
+  image_picker: ^1.1.2
+  path_provider: ^2.1.4
 
 dev_dependencies:
   flutter_test:
