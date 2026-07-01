@@ -16,6 +16,8 @@ class AppTheme {
   static ThemeData _build(Brightness brightness, [Color? seed]) {
     final scheme = ColorScheme.fromSeed(
         seedColor: seed ?? defaultSeed, brightness: brightness);
+    final isDark = brightness == Brightness.dark;
+
     return ThemeData(
       useMaterial3: true,
       colorScheme: scheme,
@@ -24,18 +26,56 @@ class AppTheme {
       appBarTheme: AppBarTheme(
         elevation: 0,
         scrolledUnderElevation: 0,
-        centerTitle: true,
+        centerTitle: false,
         backgroundColor: scheme.surface,
         foregroundColor: scheme.onSurface,
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: scheme.primary,
         foregroundColor: scheme.onPrimary,
+        elevation: 2,
+        highlightElevation: 4,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
       ),
       cardTheme: CardThemeData(
         elevation: 0,
-        color: scheme.surfaceContainerHighest,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        clipBehavior: Clip.antiAlias,
+        color: isDark ? scheme.surfaceContainerHigh : scheme.surfaceContainerLow,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+      ),
+      tabBarTheme: TabBarThemeData(
+        indicatorSize: TabBarIndicatorSize.tab,
+        dividerColor: Colors.transparent,
+        labelColor: scheme.onPrimaryContainer,
+        unselectedLabelColor: scheme.onSurfaceVariant,
+        labelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+        unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500),
+        indicator: BoxDecoration(
+          color: scheme.primaryContainer,
+          borderRadius: BorderRadius.circular(14),
+        ),
+        overlayColor: WidgetStatePropertyAll(
+            scheme.primaryContainer.withValues(alpha: 0.25)),
+      ),
+      chipTheme: ChipThemeData(
+        backgroundColor: scheme.surfaceContainerHighest,
+        selectedColor: scheme.secondaryContainer,
+        side: BorderSide.none,
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        labelStyle: TextStyle(color: scheme.onSurface),
+        secondaryLabelStyle: TextStyle(color: scheme.onSecondaryContainer),
+      ),
+      dividerTheme: DividerThemeData(
+        color: scheme.outlineVariant.withValues(alpha: 0.5),
+        space: 1,
+        thickness: 1,
+      ),
+      snackBarTheme: SnackBarThemeData(
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        insetPadding: const EdgeInsets.all(16),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,

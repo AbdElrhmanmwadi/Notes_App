@@ -22,20 +22,29 @@ class EmptyState extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 96,
-              height: 96,
+              width: 104,
+              height: 104,
               decoration: BoxDecoration(
-                color: scheme.primaryContainer.withValues(alpha: 0.5),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    scheme.primaryContainer.withValues(alpha: 0.7),
+                    scheme.primaryContainer.withValues(alpha: 0.3),
+                  ],
+                ),
                 shape: BoxShape.circle,
               ),
-              child: Icon(icon, size: 44, color: scheme.primary),
+              child: Icon(icon, size: 46, color: scheme.primary),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 22),
             Text(
               message,
               textAlign: TextAlign.center,
-              style: theme.textTheme.bodyLarge
-                  ?.copyWith(color: scheme.onSurfaceVariant),
+              style: theme.textTheme.bodyLarge?.copyWith(
+                color: scheme.onSurfaceVariant,
+                height: 1.4,
+              ),
             ),
           ],
         ),

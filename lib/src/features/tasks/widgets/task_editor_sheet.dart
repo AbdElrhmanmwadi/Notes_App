@@ -94,73 +94,84 @@ class _TaskEditorSheetState extends State<TaskEditorSheet> {
   }
 
   Widget _buildSubtasks(ThemeData theme) {
+    final scheme = theme.colorScheme;
     final done = _subtasks.where((s) => s.isComplete).length;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const SizedBox(height: 12),
+        const SizedBox(height: 16),
         Row(
           children: [
-            Icon(Icons.checklist, size: 18, color: theme.colorScheme.outline),
+            Icon(Icons.checklist_rounded, size: 18, color: scheme.primary),
             const SizedBox(width: 8),
             Text(
-              _subtasks.isEmpty ? 'Subtasks' : 'Subtasks ($done/${_subtasks.length})',
+              _subtasks.isEmpty
+                  ? 'Subtasks'
+                  : 'Subtasks · $done/${_subtasks.length}',
               style: theme.textTheme.labelLarge
-                  ?.copyWith(color: theme.colorScheme.outline),
+                  ?.copyWith(fontWeight: FontWeight.w600),
             ),
           ],
         ),
+        const SizedBox(height: 6),
         for (var i = 0; i < _subtasks.length; i++)
-          Row(
-            children: [
-              SizedBox(
-                width: 36,
-                child: Checkbox(
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 1),
+            child: Row(
+              children: [
+                _MiniCircleCheck(
                   value: _subtasks[i].isComplete,
-                  onChanged: (_) => _toggleSubtask(i),
+                  color: scheme.primary,
+                  onTap: () => _toggleSubtask(i),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    _subtasks[i].title,
+                    style: _subtasks[i].isComplete
+                        ? theme.textTheme.bodyMedium?.copyWith(
+                            decoration: TextDecoration.lineThrough,
+                            color: scheme.outline,
+                          )
+                        : theme.textTheme.bodyMedium,
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close, size: 18),
+                  color: scheme.outline,
                   visualDensity: VisualDensity.compact,
+                  onPressed: () => _removeSubtask(i),
                 ),
-              ),
+              ],
+            ),
+          ),
+        Container(
+          margin: const EdgeInsets.only(top: 4),
+          padding: const EdgeInsets.only(left: 12, right: 4),
+          decoration: BoxDecoration(
+            color: scheme.surfaceContainerHighest,
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.add, size: 20, color: scheme.onSurfaceVariant),
+              const SizedBox(width: 8),
               Expanded(
-                child: Text(
-                  _subtasks[i].title,
-                  style: _subtasks[i].isComplete
-                      ? theme.textTheme.bodyMedium?.copyWith(
-                          decoration: TextDecoration.lineThrough,
-                          color: theme.colorScheme.outline,
-                        )
-                      : theme.textTheme.bodyMedium,
+                child: TextField(
+                  controller: _subtaskController,
+                  textCapitalization: TextCapitalization.sentences,
+                  textInputAction: TextInputAction.done,
+                  onSubmitted: (_) => _addSubtask(),
+                  decoration: const InputDecoration(
+                    hintText: 'Add a subtask…',
+                    filled: false,
+                    border: InputBorder.none,
+                    isDense: true,
+                  ),
                 ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.close, size: 18),
-                visualDensity: VisualDensity.compact,
-                onPressed: () => _removeSubtask(i),
               ),
             ],
           ),
-        Row(
-          children: [
-            const SizedBox(width: 4),
-            Expanded(
-              child: TextField(
-                controller: _subtaskController,
-                textCapitalization: TextCapitalization.sentences,
-                textInputAction: TextInputAction.done,
-                onSubmitted: (_) => _addSubtask(),
-                decoration: const InputDecoration(
-                  hintText: 'Add a subtask…',
-                  filled: false,
-                  border: InputBorder.none,
-                  isDense: true,
-                ),
-              ),
-            ),
-            IconButton(
-              icon: const Icon(Icons.add),
-              onPressed: _addSubtask,
-            ),
-          ],
         ),
       ],
     );
@@ -212,6 +223,17 @@ class _TaskEditorSheetState extends State<TaskEditorSheet> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              Center(
+                child: Container(
+                  width: 36,
+                  height: 4,
+                  margin: const EdgeInsets.only(bottom: 12),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.outlineVariant,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
               Flexible(
                 child: SingleChildScrollView(
                   child: Column(
@@ -319,6 +341,46 @@ class _TaskEditorSheetState extends State<TaskEditorSheet> {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Small circular checkbox used in the editor's subtask list, matching the
+/// tactile style used on the task cards.
+class _MiniCircleCheck extends StatelessWidget {
+  const _MiniCircleCheck({
+    required this.value,
+    required this.color,
+    required this.onTap,
+  });
+
+  final bool value;
+  final Color color;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        curve: Curves.easeOut,
+        width: 22,
+        height: 22,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: value ? color : Colors.transparent,
+          border: Border.all(
+            color: value ? color : scheme.outline,
+            width: 2,
+          ),
+        ),
+        child: value
+            ? Icon(Icons.check, size: 14, color: scheme.onPrimary)
+            : null,
       ),
     );
   }

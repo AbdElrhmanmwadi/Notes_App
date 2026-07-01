@@ -71,6 +71,7 @@ class TasksTab extends StatelessWidget {
         task: task,
         onToggle: (_) => controller.toggleComplete(task),
         onTap: () => _edit(controller, task),
+        onToggleSubtask: (index) => controller.toggleSubtask(task, index),
       ),
     );
   }

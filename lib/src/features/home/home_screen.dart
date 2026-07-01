@@ -79,14 +79,20 @@ class _HomeScreenState extends State<HomeScreen>
           ),
           const SizedBox(width: 4),
         ],
-        bottom: TabBar(
-          controller: _tabController,
-          indicatorSize: TabBarIndicatorSize.tab,
-          dividerColor: Colors.transparent,
-          tabs: const [
-            Tab(icon: Icon(Icons.sticky_note_2_outlined), text: 'Notes'),
-            Tab(icon: Icon(Icons.task_alt_outlined), text: 'Tasks'),
-          ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(56),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+            child: TabBar(
+              controller: _tabController,
+              splashBorderRadius: BorderRadius.circular(14),
+              indicatorPadding: const EdgeInsets.symmetric(vertical: 6),
+              tabs: const [
+                _SegTab(icon: Icons.sticky_note_2_outlined, label: 'Notes'),
+                _SegTab(icon: Icons.task_alt_outlined, label: 'Tasks'),
+              ],
+            ),
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
@@ -98,6 +104,30 @@ class _HomeScreenState extends State<HomeScreen>
         controller: _tabController,
         physics: const NeverScrollableScrollPhysics(),
         children: const [NotesTab(), TasksTab()],
+      ),
+    );
+  }
+}
+
+/// A pill-style tab with a horizontal icon + label, sized to sit neatly inside
+/// the rounded [TabBar] indicator.
+class _SegTab extends StatelessWidget {
+  const _SegTab({required this.icon, required this.label});
+
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Tab(
+      height: 44,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 20),
+          const SizedBox(width: 8),
+          Text(label),
+        ],
       ),
     );
   }
