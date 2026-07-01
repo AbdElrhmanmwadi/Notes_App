@@ -10,6 +10,8 @@ class Note {
     this.background,
     this.isPinned = false,
     this.tags = const [],
+    this.isArchived = false,
+    this.deletedAt,
   });
 
   final int? id;
@@ -30,6 +32,15 @@ class Note {
 
   final bool isPinned;
 
+  /// Whether the note is archived (hidden from the main list).
+  final bool isArchived;
+
+  /// When the note was moved to trash, or null if it is not trashed. Stored as
+  /// milliseconds since epoch.
+  final DateTime? deletedAt;
+
+  bool get isTrashed => deletedAt != null;
+
   factory Note.fromMap(Map<String, Object?> map) => Note(
         id: map['id'] as int?,
         title: (map['title'] as String?) ?? '',
@@ -39,6 +50,10 @@ class Note {
             _legacyColorToken(map['color'] as int?),
         isPinned: (map['isPinned'] as int? ?? 0) == 1,
         tags: _decodeTags(map['tags'] as String?),
+        isArchived: (map['isArchived'] as int? ?? 0) == 1,
+        deletedAt: (map['deletedAt'] as int?) == null
+            ? null
+            : DateTime.fromMillisecondsSinceEpoch(map['deletedAt'] as int),
       );
 
   /// Converts a legacy ARGB `color` int into a `c:<argb>` background token.
@@ -79,6 +94,8 @@ class Note {
         'color': null, // legacy column no longer used
         'isPinned': isPinned ? 1 : 0,
         'tags': tags.isEmpty ? null : tags.join(','),
+        'isArchived': isArchived ? 1 : 0,
+        'deletedAt': deletedAt?.millisecondsSinceEpoch,
       };
 
   /// Human-readable date. Falls back to the raw string for legacy rows whose
@@ -99,7 +116,10 @@ class Note {
     String? background,
     bool? isPinned,
     List<String>? tags,
+    bool? isArchived,
+    DateTime? deletedAt,
     bool clearBackground = false,
+    bool clearDeletedAt = false,
   }) =>
       Note(
         id: id ?? this.id,
@@ -109,5 +129,7 @@ class Note {
         background: clearBackground ? null : (background ?? this.background),
         isPinned: isPinned ?? this.isPinned,
         tags: tags ?? this.tags,
+        isArchived: isArchived ?? this.isArchived,
+        deletedAt: clearDeletedAt ? null : (deletedAt ?? this.deletedAt),
       );
 }

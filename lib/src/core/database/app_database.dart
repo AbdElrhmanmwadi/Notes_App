@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite/sqflite.dart';
 
+import '../../models/note_query.dart';
+
 /// Thin, safe wrapper around the application's SQLite database.
 ///
 /// All write/read helpers use parameterised queries (`whereArgs`) to avoid
@@ -12,7 +14,10 @@ class AppDatabase {
   static final AppDatabase instance = AppDatabase._();
 
   static const _dbName = 'note.db';
-  static const _dbVersion = 8;
+  static const _dbVersion = 9;
+
+  /// Notes in the trash older than this are purged automatically.
+  static const trashRetention = Duration(days: 30);
 
   static const notesTable = 'notes';
   static const tasksTable = 'tasks';
@@ -88,7 +93,9 @@ class AppDatabase {
         color      INTEGER,
         background TEXT,
         tags       TEXT,
-        isPinned   INTEGER NOT NULL DEFAULT 0
+        isPinned   INTEGER NOT NULL DEFAULT 0,
+        isArchived INTEGER NOT NULL DEFAULT 0,
+        deletedAt  INTEGER
       )
     ''');
     batch.execute('''
@@ -144,6 +151,10 @@ class AppDatabase {
         'ALTER TABLE $tasksTable ADD COLUMN recurrence INTEGER NOT NULL DEFAULT 0');
     await _ensureColumn(db, tasksTable, 'subtasks',
         'ALTER TABLE $tasksTable ADD COLUMN subtasks TEXT');
+    await _ensureColumn(db, notesTable, 'isArchived',
+        'ALTER TABLE $notesTable ADD COLUMN isArchived INTEGER NOT NULL DEFAULT 0');
+    await _ensureColumn(db, notesTable, 'deletedAt',
+        'ALTER TABLE $notesTable ADD COLUMN deletedAt INTEGER');
   }
 
   /// Adds [column] via [alterStatement] when it is missing.
@@ -211,13 +222,26 @@ class AppDatabase {
 
   // --- Notes search ---------------------------------------------------------
 
-  /// Full-text search over notes, newest/pinned first. Uses FTS5 when
-  /// available and transparently falls back to `LIKE`.
-  Future<List<Map<String, Object?>>> searchNotes(String rawQuery) async {
+  /// Full-text search over notes within a [scope] (active list / archive /
+  /// trash), ordered by [sort]. Uses FTS5 when available and transparently
+  /// falls back to `LIKE`. Expired trash is purged first.
+  ///
+  /// The scope/sort clauses are built from fixed enum values (never user
+  /// input), so the string interpolation here carries no injection risk; the
+  /// query text itself stays parameterised.
+  Future<List<Map<String, Object?>>> searchNotes(
+    String rawQuery, {
+    NoteScope scope = NoteScope.active,
+    NoteSort sort = NoteSort.updated,
+  }) async {
     final db = await _database;
+    await _purgeExpiredTrash(db);
     final trimmed = rawQuery.trim();
+    final orderBy = _orderClause(scope, sort, '');
+
     if (trimmed.isEmpty) {
-      return db.query(notesTable, orderBy: 'isPinned DESC, id DESC');
+      return db.query(notesTable,
+          where: _scopeClause(scope, ''), orderBy: orderBy);
     }
 
     if (_ftsEnabled) {
@@ -230,8 +254,8 @@ class AppDatabase {
         return await db.rawQuery(
           'SELECT n.* FROM $notesTable n '
           'JOIN $_notesFts f ON n.id = f.rowid '
-          'WHERE $_notesFts MATCH ? '
-          'ORDER BY n.isPinned DESC, n.id DESC',
+          'WHERE $_notesFts MATCH ? AND ${_scopeClause(scope, 'n.')} '
+          'ORDER BY ${_orderClause(scope, sort, 'n.')}',
           [match],
         );
       } catch (_) {
@@ -242,10 +266,39 @@ class AppDatabase {
     final like = '%$trimmed%';
     return db.query(
       notesTable,
-      where: '(title LIKE ? OR note LIKE ?)',
+      where: '(title LIKE ? OR note LIKE ?) AND ${_scopeClause(scope, '')}',
       whereArgs: [like, like],
-      orderBy: 'isPinned DESC, id DESC',
+      orderBy: orderBy,
     );
+  }
+
+  /// SQL predicate restricting rows to [scope]. [alias] is a table prefix such
+  /// as `n.` (or empty for an un-aliased query).
+  String _scopeClause(NoteScope scope, String alias) => switch (scope) {
+        NoteScope.active => '${alias}deletedAt IS NULL AND ${alias}isArchived = 0',
+        NoteScope.archived =>
+          '${alias}deletedAt IS NULL AND ${alias}isArchived = 1',
+        NoteScope.trash => '${alias}deletedAt IS NOT NULL',
+      };
+
+  /// `ORDER BY` clause for [scope]/[sort]. Trash is always newest-deleted first;
+  /// other scopes keep pinned notes on top, then apply the chosen order.
+  String _orderClause(NoteScope scope, NoteSort sort, String alias) {
+    if (scope == NoteScope.trash) return '${alias}deletedAt DESC';
+    final pin = '${alias}isPinned DESC, ';
+    return switch (sort) {
+      NoteSort.updated => '$pin${alias}date DESC, ${alias}id DESC',
+      NoteSort.title => '$pin${alias}title COLLATE NOCASE ASC, ${alias}id DESC',
+      NoteSort.created => '$pin${alias}id DESC',
+    };
+  }
+
+  /// Permanently removes trashed notes older than [trashRetention].
+  Future<void> _purgeExpiredTrash(Database db) async {
+    final cutoff =
+        DateTime.now().subtract(trashRetention).millisecondsSinceEpoch;
+    await db.delete(notesTable,
+        where: 'deletedAt IS NOT NULL AND deletedAt < ?', whereArgs: [cutoff]);
   }
 
   // --- Generic CRUD ---------------------------------------------------------
